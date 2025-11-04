@@ -46,15 +46,16 @@ export default function NewEntryPage() {
 		}
 	};
 
-	const displayDate = new Date().toLocaleDateString("en-US", {
-		weekday: "long",
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-
+ //Changed en-US to sv-SE for Swedish date format
+  const displayDate = new Date().toLocaleDateString("sv-SE", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 	return (
 		<div className="min-h-screen">
 			<Header />
