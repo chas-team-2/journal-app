@@ -38,8 +38,10 @@ export default function NewEntryPage() {
 		try {
 			await createEntry({ title, content });
 			router.push("/dashboard");
-		} catch (err: any) {
-			setError(err.message || "Failed to create entry");
+		} catch (err: unknown) {
+			const message = err instanceof Error ? err.message : "Failed to create entry";
+			setError(message);
+		} finally {
 			setLoading(false);
 		}
 	};

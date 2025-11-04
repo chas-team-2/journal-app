@@ -27,10 +27,11 @@ export default function DashboardPage() {
 
         const data = await getEntries()
         setEntries(data)
-      } catch (err: any) {
-        setError(err.message || 'Failed to load entries')
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to load entries';
+        setError(message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
@@ -80,7 +81,7 @@ export default function DashboardPage() {
 
         {entries.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-warm-gray mb-6">You haven't written any entries yet.</p>
+            <p className="text-warm-gray mb-6">{"You haven't written any entries yet."}</p>
             <Link href="/new-entry">
               <button className="btn-secondary">Write your first entry</button>
             </Link>
