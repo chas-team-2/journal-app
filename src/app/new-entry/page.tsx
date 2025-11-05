@@ -46,8 +46,8 @@ export default function NewEntryPage() {
 		}
 	};
 
- //Changed en-US to sv-SE for Swedish date format
-  const displayDate = new Date().toLocaleDateString("sv-SE", {
+ //Changed en-US to en-GB for British date format
+  const displayDate = new Date().toLocaleDateString("en-GB", {
     weekday: "long",
     year: "numeric",
     month: "long",
