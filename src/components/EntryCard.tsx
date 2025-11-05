@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Entry } from '@/types/database.types'
 
 interface EntryCardProps {
@@ -15,16 +16,20 @@ export default function EntryCard({ entry }: EntryCardProps) {
 	});
 
   return (
-    <div className="card" style={{ minWidth: '600px' }}>
-      <div className="mb-4">
-        <div className="text-xs text-warm-gray mb-2 tracking-wide uppercase">
-          {formattedDate}
-        </div>
-        <h2 className="text-2xl font-serif text-dark-brown mb-3">{entry.title}</h2>
+    
+      <div className="card cursor-pointer hover:shadow-lg transition-shadow" style={{ minWidth: '600px' }}>
+        <Link href={`/entries/${entry.id}`}>
+          <div className="mb-4">
+            <div className="text-xs text-warm-gray mb-2 tracking-wide uppercase">
+              {formattedDate}
+            </div>
+            <h2 className="text-2xl font-serif text-dark-brown mb-3">{entry.title}</h2>
+            </div>
+            <p className="text-dark-brown/80 leading-relaxed whitespace-pre-wrap" style={{ width: '550px' }}>
+              {entry.content}
+            </p>
+        </Link>
       </div>
-      <p className="text-dark-brown/80 leading-relaxed whitespace-pre-wrap" style={{ width: '550px' }}>
-        {entry.content}
-      </p>
-    </div>
+        
   )
 }
