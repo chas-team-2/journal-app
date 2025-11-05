@@ -88,7 +88,7 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
     throw new Error('User not authenticated')
   }
 
-  console.log('Attempting to update entry:', { id, user_id: user.id, entry })
+
 
   // First, verify the entry exists and belongs to the user
   const { data: existingEntry, error: fetchError } = await supabase
@@ -103,7 +103,7 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
     throw new Error('Entry not found or access denied')
   }
 
-  console.log('Found existing entry:', existingEntry)
+
 
   // Try update without user_id filter first
   const { data, error, count } = await supabase
@@ -115,7 +115,7 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
     .eq('id', id)
     .select()
 
-  console.log('Update result:', { data, error, count })
+
 
   if (error) {
     console.error('Update error:', error)
@@ -126,6 +126,6 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
     throw new Error('Update returned no data - possible RLS policy issue')
   }
 
-  console.log('Update successful:', data[0])
+
   return data[0]
 }

@@ -28,8 +28,8 @@ export default function EditEntryPage() {
 
 				const entry = await getEntry(entryId);
 				// Remove "Title är: " prefix if it exists for editing
-				const cleanTitle = entry.title.startsWith("Title är: ") 
-					? entry.title.substring(10) 
+				const cleanTitle = entry.title.startsWith("Title är: ")
+					? entry.title.substring(10)
 					: entry.title;
 				setTitle(cleanTitle);
 				setContent(entry.content);
@@ -57,7 +57,7 @@ export default function EditEntryPage() {
 		setSaving(true);
 
 		try {
-			console.log('Updating entry:', entryId, { title, content });
+
 			await updateEntry(entryId, { title, content });
 			router.push("/dashboard");
 		} catch (err: unknown) {
@@ -97,7 +97,7 @@ export default function EditEntryPage() {
 		);
 	}
 
-	const displayDate = new Date(createdAt).toLocaleDateString("sv-SE", {
+	const displayDate = new Date(createdAt).toLocaleDateString("en-GB", {
 		weekday: "long",
 		year: "numeric",
 		month: "long",
