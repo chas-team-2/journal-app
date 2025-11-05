@@ -18,6 +18,7 @@ coverage
 # Misc
 .DS_Store
 *.pem
+personal-docs
 
 # Debug & logs
 npm-debug.log*

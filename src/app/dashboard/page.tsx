@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { apiGetEntries } from '@/lib/api/entries'
+import { apiGetCurrentUser } from '@/lib/api/auth'
+import { Entry } from '@/types/database.types'
 import Header from '@/components/Header'
 import EntryCard from '@/components/EntryCard'
-import { getEntries } from '@/lib/supabase/queries'
-import { getCurrentUser } from '@/lib/supabase/auth'
-import { Entry } from '@/types/database.types'
 import Link from 'next/link'
 
 export default function DashboardPage() {
@@ -18,14 +18,14 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const user = await getCurrentUser()
+        const user = await apiGetCurrentUser()
 
         if (!user) {
           router.push('/login')
           return
         }
 
-        const data = await getEntries()
+        const data = await apiGetEntries()
         setEntries(data)
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Failed to load entries';

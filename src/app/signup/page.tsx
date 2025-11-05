@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { apiSignUp } from '@/lib/api/auth'
 import Link from 'next/link'
-import { signUp } from '@/lib/supabase/auth'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -30,7 +30,7 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      await signUp({ email, password })
+      await apiSignUp({ email, password })
       router.push('/dashboard')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'An error occurred during signup';

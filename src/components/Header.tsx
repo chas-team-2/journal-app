@@ -1,6 +1,6 @@
 'use client'
 
-import { signOut } from '@/lib/supabase/auth'
+import { apiSignOut } from '@/lib/api/auth'
 import { useRouter } from 'next/navigation'
 
 export default function Header() {
@@ -8,7 +8,7 @@ export default function Header() {
 
   const handleSignOut = async () => {
     try {
-      await signOut()
+      await apiSignOut()
       router.push('/login')
     } catch (error) {
       console.error('Error signing out:', error)

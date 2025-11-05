@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { apiCreateEntry } from "@/lib/api/entries";
+import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
-import { createEntry } from "@/lib/supabase/queries";
-import { getCurrentUser } from "@/lib/supabase/auth";
 
 export default function NewEntryPage() {
 	const router = useRouter();
@@ -15,7 +15,7 @@ export default function NewEntryPage() {
 
 	useEffect(() => {
 		async function checkAuth() {
-			const user = await getCurrentUser();
+			const user = await apiGetCurrentUser();
 			if (!user) {
 				router.push("/login");
 			}
@@ -36,7 +36,7 @@ export default function NewEntryPage() {
 		setLoading(true);
 
 		try {
-			await createEntry({ title, content });
+			await apiCreateEntry({ title, content });
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			const message = err instanceof Error ? err.message : "Failed to create entry";
