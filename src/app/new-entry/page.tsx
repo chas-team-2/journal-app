@@ -12,6 +12,7 @@ export default function NewEntryPage() {
 	const [content, setContent] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [displayDate, setDisplayDate] = useState("");
 
 	useEffect(() => {
 		async function checkAuth() {
@@ -22,6 +23,17 @@ export default function NewEntryPage() {
 		}
 
 		checkAuth();
+		
+		// Set date on client side only to avoid hydration mismatch
+		setDisplayDate(new Date().toLocaleDateString("en-GB", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+		}));
 	}, [router]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -45,15 +57,6 @@ export default function NewEntryPage() {
 			setLoading(false);
 		}
 	};
-  const displayDate = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
 	return (
 		<div className="min-h-screen">
 			<Header />
