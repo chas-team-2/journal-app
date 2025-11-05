@@ -8,7 +8,17 @@ A minimalist journaling application built with Next.js 14, TypeScript, Tailwind 
 - **Frontend Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **Backend/Database:** Supabase (Authentication + PostgreSQL)
+- **Backend:** Next.js API Routes (Route Handlers)
+- **Database & Auth:** Supabase (Authentication + PostgreSQL)
+
+## Architecture
+
+The application uses a **backend API layer** with Next.js Route Handlers instead of direct client-side Supabase calls. This provides:
+
+- Better security (sensitive operations happen server-side)
+- Separation of concerns
+- Easier testing and maintenance
+- Centralized error handling
 
 ## Getting Started
 

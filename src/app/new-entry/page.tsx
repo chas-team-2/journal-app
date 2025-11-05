@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { apiCreateEntry } from "@/lib/api/entries";
+import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
-import { createEntry } from "@/lib/supabase/queries";
-import { getCurrentUser } from "@/lib/supabase/auth";
 
 export default function NewEntryPage() {
 	const router = useRouter();
@@ -12,16 +12,28 @@ export default function NewEntryPage() {
 	const [content, setContent] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [displayDate, setDisplayDate] = useState("");
 
 	useEffect(() => {
 		async function checkAuth() {
-			const user = await getCurrentUser();
+			const user = await apiGetCurrentUser();
 			if (!user) {
 				router.push("/login");
 			}
 		}
 
 		checkAuth();
+		
+		// Set date on client side only to avoid hydration mismatch
+		setDisplayDate(new Date().toLocaleDateString("en-GB", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+		}));
 	}, [router]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -36,7 +48,7 @@ export default function NewEntryPage() {
 		setLoading(true);
 
 		try {
-			await createEntry({ title, content });
+			await apiCreateEntry({ title, content });
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			const message = err instanceof Error ? err.message : "Failed to create entry";
@@ -45,15 +57,6 @@ export default function NewEntryPage() {
 			setLoading(false);
 		}
 	};
-  const displayDate = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
 	return (
 		<div className="min-h-screen">
 			<Header />

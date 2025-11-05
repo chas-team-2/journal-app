@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { apiGetEntry, apiUpdateEntry } from "@/lib/api/entries";
+import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
-import { getEntry, updateEntry } from "@/lib/supabase/queries";
-import { getCurrentUser } from "@/lib/supabase/auth";
 
 export default function EditEntryPage() {
 	const router = useRouter();
@@ -20,13 +20,13 @@ export default function EditEntryPage() {
 	useEffect(() => {
 		async function loadEntry() {
 			try {
-				const user = await getCurrentUser();
+				const user = await apiGetCurrentUser();
 				if (!user) {
 					router.push("/login");
 					return;
 				}
 
-				const entry = await getEntry(entryId);
+				const entry = await apiGetEntry(entryId);
 				// Remove "Title är: " prefix if it exists for editing
 				const cleanTitle = entry.title.startsWith("Title är: ")
 					? entry.title.substring(10)
@@ -58,7 +58,7 @@ export default function EditEntryPage() {
 
 		try {
 
-			await updateEntry(entryId, { title, content });
+			await apiUpdateEntry(entryId, { title, content });
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			console.error('Update failed:', err);

@@ -1,20 +1,16 @@
-import { supabase } from './client'
+import { createClient } from './server'
 import { Entry, NewEntry } from '@/types/database.types'
 
 /**
  * Fetch all entries for the authenticated user
+ * RLS automatically filters by user_id
  */
 export async function getEntries(): Promise<Entry[]> {
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error('User not authenticated')
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('entries')
     .select('*')
-    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -26,19 +22,15 @@ export async function getEntries(): Promise<Entry[]> {
 
 /**
  * Get a single entry by ID
+ * RLS ensures user can only access their own entries
  */
 export async function getEntry(id: string): Promise<Entry> {
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error('User not authenticated')
-  }
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('entries')
     .select('*')
     .eq('id', id)
-    .eq('user_id', user.id)
     .single()
 
   if (error) {
@@ -50,8 +42,11 @@ export async function getEntry(id: string): Promise<Entry> {
 
 /**
  * Create a new entry for the authenticated user
+ * RLS ensures user_id is set correctly
  */
 export async function createEntry(entry: NewEntry): Promise<Entry> {
+  const supabase = await createClient()
+
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
@@ -80,33 +75,12 @@ export async function createEntry(entry: NewEntry): Promise<Entry> {
 
 /**
  * Update an existing entry
+ * RLS ensures user can only update their own entries
  */
 export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
-  const { data: { user } } = await supabase.auth.getUser()
+  const supabase = await createClient()
 
-  if (!user) {
-    throw new Error('User not authenticated')
-  }
-
-
-
-  // First, verify the entry exists and belongs to the user
-  const { data: existingEntry, error: fetchError } = await supabase
-    .from('entries')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
-
-  if (fetchError) {
-    console.error('Fetch error:', fetchError)
-    throw new Error('Entry not found or access denied')
-  }
-
-
-
-  // Try update without user_id filter first
-  const { data, error, count } = await supabase
+  const { data, error } = await supabase
     .from('entries')
     .update({
       title: `Title är: ${entry.title}`,
@@ -114,18 +88,28 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
     })
     .eq('id', id)
     .select()
-
-
+    .single()
 
   if (error) {
-    console.error('Update error:', error)
-    throw new Error(error.message || 'Failed to update entry')
+    throw error
   }
 
-  if (!data || data.length === 0) {
-    throw new Error('Update returned no data - possible RLS policy issue')
+  return data
+}
+
+/**
+ * Delete an entry
+ * RLS ensures user can only delete their own entries
+ */
+export async function deleteEntry(id: string): Promise<void> {
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('entries')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    throw error
   }
-
-
-  return data[0]
 }
