@@ -20,6 +20,21 @@ The application uses a **backend API layer** with Next.js Route Handlers instead
 - Easier testing and maintenance
 - Centralized error handling
 
+## Architecture
+
+The application uses a backend API layer with Next.js Route Handlers instead of direct client-side Supabase calls. This provides:
+
+- Better security (sensitive operations happen server-side)
+- Separation of concerns
+- Easier testing and maintenance
+- Centralized error handling
+
+## Type Safety
+
+- All database data is typed with manually defined TypeScript interfaces in src/types/database.types.ts.
+- No any types or unnecessary null values are used.
+- All API functions are fully typed to ensure safe data flow between frontend and backend.
+
 ## Getting Started
 
 ### 1. Clone the Repository
@@ -44,6 +59,20 @@ npm install
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your-project-url-here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+### 4. Test Account for Demo / Review
+
+The app is deployed publicly (e.g., on Vercel) with “Allow new users” disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
+
+We have created one or more test accounts for instructors or examiners, shared separately via email or private channels.
+
+In README, these accounts are referenced **without revealing credentials**:
+
+```bash
+# Test Account
+Use the provided test account credentials to log in.  
+Set environment variables according to `.env.example`.
 ```
 
 ## Available Scripts
