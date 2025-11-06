@@ -55,6 +55,7 @@ describe("DashboardPage", () => {
     });
 
     describe("Redirect when not authenticated", () => {
+        // Ensures unauthenticated users are redirected to /login.
         it("redirects to /login if user is not logged in", async () => {
             (getCurrentUser as jest.Mock).mockResolvedValue(null);
 
@@ -67,6 +68,7 @@ describe("DashboardPage", () => {
     });
 
     describe("Loading state", () => {
+        // Shows a temporary loading indicator while user and entries are fetched.
         it("displays loading state initially", async () => {
             const mockUser = { id: "user-1", email: "test@example.com" };
             (getCurrentUser as jest.Mock).mockImplementation(
@@ -95,6 +97,7 @@ describe("DashboardPage", () => {
     });
 
     describe("Display entries", () => {
+        // Renders a list of entries for the authenticated user and shows the count.
         it("displays entries after successful load", async () => {
             const mockUser = { id: "user-1", email: "test@example.com" };
             const mockEntries = [
@@ -136,6 +139,7 @@ describe("DashboardPage", () => {
             expect(entryCards).toHaveLength(2);
         });
 
+        // Shows an empty state and zero count when the user has no entries.
         it("displays empty state when no entries exist", async () => {
             const mockUser = { id: "user-1", email: "test@example.com" };
             (getCurrentUser as jest.Mock).mockResolvedValue(mockUser);

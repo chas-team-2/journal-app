@@ -28,6 +28,7 @@ describe("queries.ts", () => {
     });
 
     describe("getEntries", () => {
+        // Validates that fetching entries without an authenticated user throws an error.
         test("throws when user is not authenticated", async () => {
             supabase.auth.getUser.mockResolvedValue({ data: { user: null } });
 
@@ -36,6 +37,7 @@ describe("queries.ts", () => {
             );
         });
 
+        // Returns the user's entries ordered by created_at when authenticated.
         test("returns entries for authenticated user", async () => {
             supabase.auth.getUser.mockResolvedValue({
                 data: { user: { id: "uid-1" } },
@@ -77,6 +79,7 @@ describe("queries.ts", () => {
             expect(result).toHaveLength(2);
         });
 
+        // Resolves to an empty list when the database returns no rows.
         test("returns empty array when no data", async () => {
             supabase.auth.getUser.mockResolvedValue({
                 data: { user: { id: "uid-2" } },
@@ -94,6 +97,7 @@ describe("queries.ts", () => {
             expect(result).toEqual([]);
         });
 
+        // Surfaces and throws the underlying Supabase error when the query fails.
         test("throws when Supabase returns error", async () => {
             supabase.auth.getUser.mockResolvedValue({
                 data: { user: { id: "uid-3" } },
@@ -115,6 +119,7 @@ describe("queries.ts", () => {
     });
 
     describe("createEntry", () => {
+        // Validates that creating an entry requires an authenticated user.
         test("throws when user is not authenticated", async () => {
             supabase.auth.getUser.mockResolvedValue({ data: { user: null } });
             await expect(
@@ -122,6 +127,7 @@ describe("queries.ts", () => {
             ).rejects.toThrow("User not authenticated");
         });
 
+        // Inserts a new entry with prefixed title and returns the created row.
         test("inserts entry with prefixed title and returns created row", async () => {
             supabase.auth.getUser.mockResolvedValue({
                 data: { user: { id: "uid-4" } },
@@ -161,6 +167,7 @@ describe("queries.ts", () => {
             });
         });
 
+        // Propagates insert errors from Supabase when creation fails.
         test("throws when Supabase insert errors", async () => {
             supabase.auth.getUser.mockResolvedValue({
                 data: { user: { id: "uid-5" } },
