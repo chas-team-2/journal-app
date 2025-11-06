@@ -1,22 +1,22 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import DashboardPage from "@/app/dashboard/page";
-import { getCurrentUser } from "@/lib/supabase/auth";
-import { getEntries } from "@/lib/supabase/queries";
+import { apiGetCurrentUser } from "@/lib/api/auth";
+import { apiGetEntries } from "@/lib/api/entries";
 import { useRouter } from "next/navigation";
-import { Entry } from "@/types/database.types";
+import { Entry } from "@/types";
 
 // Mock dependencies
 jest.mock("next/navigation", () => ({
     useRouter: jest.fn(),
 }));
 
-jest.mock("@/lib/supabase/auth", () => ({
-    getCurrentUser: jest.fn(),
+jest.mock("@/lib/api/auth", () => ({
+    apiGetCurrentUser: jest.fn(),
 }));
 
-jest.mock("@/lib/supabase/queries", () => ({
-    getEntries: jest.fn(),
+jest.mock("@/lib/api/entries", () => ({
+    apiGetEntries: jest.fn(),
 }));
 
 jest.mock("@/components/Header", () => {
@@ -57,7 +57,7 @@ describe("DashboardPage", () => {
     describe("Redirect when not authenticated", () => {
         // Ensures unauthenticated users are redirected to /login.
         it("redirects to /login if user is not logged in", async () => {
-            (getCurrentUser as jest.Mock).mockResolvedValue(null);
+            (apiGetCurrentUser as jest.Mock).mockResolvedValue(null);
 
             render(<DashboardPage />);
 
@@ -71,13 +71,13 @@ describe("DashboardPage", () => {
         // Shows a temporary loading indicator while user and entries are fetched.
         it("displays loading state initially", async () => {
             const mockUser = { id: "user-1", email: "test@example.com" };
-            (getCurrentUser as jest.Mock).mockImplementation(
+            (apiGetCurrentUser as jest.Mock).mockImplementation(
                 () =>
                     new Promise((resolve) =>
                         setTimeout(() => resolve(mockUser), 100)
                     )
             );
-            (getEntries as jest.Mock).mockImplementation(
+            (apiGetEntries as jest.Mock).mockImplementation(
                 () =>
                     new Promise((resolve) => setTimeout(() => resolve([]), 200))
             );
@@ -117,8 +117,8 @@ describe("DashboardPage", () => {
                 },
             ];
 
-            (getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
-            (getEntries as jest.Mock).mockResolvedValue(mockEntries);
+            (apiGetCurrentUser as jest.Mock).mockResolvedValue(mockUser);
+            (apiGetEntries as jest.Mock).mockResolvedValue(mockEntries);
 
             render(<DashboardPage />);
 
@@ -142,8 +142,8 @@ describe("DashboardPage", () => {
         // Shows an empty state and zero count when the user has no entries.
         it("displays empty state when no entries exist", async () => {
             const mockUser = { id: "user-1", email: "test@example.com" };
-            (getCurrentUser as jest.Mock).mockResolvedValue(mockUser);
-            (getEntries as jest.Mock).mockResolvedValue([]);
+            (apiGetCurrentUser as jest.Mock).mockResolvedValue(mockUser);
+            (apiGetEntries as jest.Mock).mockResolvedValue([]);
 
             render(<DashboardPage />);
 
