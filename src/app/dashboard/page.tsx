@@ -42,7 +42,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen">
         <Header />
-        <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
           <p className="text-warm-gray text-center">Loading...</p>
         </div>
       </div>
@@ -64,23 +64,25 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="max-w-4xl mx-auto py-12" style={{ paddingLeft: '80px', paddingRight: '80px' }}>
-        <div className="flex items-center justify-between mb-12">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-12">
           <div>
-            <h2 className="text-3xl font-serif text-dark-brown mb-2">Your Entries</h2>
+            <h2 className="text-2xl sm:text-3xl font-serif text-dark-brown mb-1 sm:mb-2">
+  Your Entries
+</h2>
             <p className="text-warm-gray text-sm">
               {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
             </p>
           </div>
-          <Link href="/new-entry">
-            <button className="btn-primary" style={{ minWidth: '160px' }}>
-              New Entry
-            </button>
-          </Link>
+          <Link href="/new-entry" className="self-stretch sm:self-auto">
+  <button className="btn-primary w-full sm:w-auto sm:min-w-160px">
+    New Entry
+  </button>
+</Link>
         </div>
 
         {entries.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-12 sm:py-16 px-2">
             <p className="text-warm-gray mb-6">{"You haven't written any entries yet."}</p>
             <Link href="/new-entry">
               <button className="btn-secondary">Write your first entry</button>
