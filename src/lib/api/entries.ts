@@ -1,4 +1,4 @@
-import { Entry, NewEntry } from '@/types/database.types'
+import { Entry, NewEntry } from '@/types'
 
 /**
  * Fetch all entries for the authenticated user

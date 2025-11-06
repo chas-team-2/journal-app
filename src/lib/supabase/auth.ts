@@ -1,5 +1,5 @@
 import { createClient } from './server'
-import { LoginCredentials, SignupCredentials } from '@/types/auth.types'
+import { LoginCredentials, SignupCredentials } from '@/types'
 
 /**
  * Sign up a new user with email and password

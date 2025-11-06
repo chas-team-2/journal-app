@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "jest"
+    "test": "jest",
+    "types:generate": "npx supabase login && npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/supabase.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -25,8 +26,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
     "jest": "^30.2.0",
+    "supabase": "^2.54.11",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.5",
-    "typescript": "^5"
+    "typescript": "5.9.3"
   }
 }

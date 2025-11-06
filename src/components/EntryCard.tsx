@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Entry } from '@/types/database.types'
+import { Entry } from '@/types'
 
 interface EntryCardProps {
   entry: Entry
