@@ -16,11 +16,11 @@ export default function EntryCard({ entry }: EntryCardProps) {
 	});
 
   return (
-    
+
       <div className="card w-full cursor-pointer hover:shadow-lg transition-shadow">
         <Link href={`/entries/${entry.id}`}>
           <div className="mb-3 sm:mb-4">
-            <div className="">
+            <div className="text-xs text-warm-gray mb-2 tracking-wide uppercase">
               {formattedDate}
             </div>
             <h2 className="text-xl sm:text-2xl font-serif text-dark-brown mb-2 sm:mb-3">{entry.title}</h2>
