@@ -27,11 +27,7 @@ export default function EditEntryPage() {
 				}
 
 				const entry = await apiGetEntry(entryId);
-				// Remove "Title är: " prefix if it exists for editing
-				const cleanTitle = entry.title.startsWith("Title är: ")
-					? entry.title.substring(10)
-					: entry.title;
-				setTitle(cleanTitle);
+				setTitle(entry.title);
 				setContent(entry.content);
 				setCreatedAt(entry.created_at);
 			} catch (err: unknown) {

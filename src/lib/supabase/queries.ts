@@ -58,7 +58,7 @@ export async function createEntry(entry: NewEntry): Promise<Entry> {
     .insert([
       {
         user_id: user.id,
-        title: `Title är: ${entry.title}`,
+        title: entry.title,
         content: entry.content,
         created_at: new Date().toISOString()
       }
@@ -83,7 +83,7 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
   const { data, error } = await supabase
     .from('entries')
     .update({
-      title: `Title är: ${entry.title}`,
+      title: entry.title,
       content: entry.content
     })
     .eq('id', id)
