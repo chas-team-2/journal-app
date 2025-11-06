@@ -85,6 +85,20 @@ Use the provided test account credentials to log in.
 Set environment variables according to `.env.example`.
 ```
 
+### 4. Test Account for Demo / Review
+
+The app is deployed publicly (e.g., on Vercel) with “Allow new users” disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
+
+We have created one or more test accounts for instructors or examiners, shared separately via email or private channels.
+
+In README, these accounts are referenced **without revealing credentials**:
+
+```bash
+# Test Account
+Use the provided test account credentials to log in.  
+Set environment variables according to `.env.example`.
+```
+
 ## Available Scripts
 
 - `npm run dev` - Start the development server
