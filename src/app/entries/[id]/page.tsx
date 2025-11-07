@@ -1,40 +1,45 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { apiCreateEntry } from "@/lib/api/entries";
+import { useRouter, useParams } from "next/navigation";
+import { apiGetEntry, apiUpdateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
 
-export default function NewEntryPage() {
+export default function EditEntryPage() {
 	const router = useRouter();
+	const params = useParams();
+	const entryId = params.id as string;
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [createdAt, setCreatedAt] = useState("");
 	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [displayDate, setDisplayDate] = useState("");
+	const [loading, setLoading] = useState(true);
+	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
-		async function checkAuth() {
-			const user = await apiGetCurrentUser();
-			if (!user) {
-				router.push("/login");
+		async function loadEntry() {
+			try {
+				const user = await apiGetCurrentUser();
+				if (!user) {
+					router.push("/login");
+					return;
+				}
+
+				const entry = await apiGetEntry(entryId);
+				setTitle(entry.title);
+				setContent(entry.content);
+				setCreatedAt(entry.created_at);
+			} catch (err: unknown) {
+				const message = err instanceof Error ? err.message : "Failed to load entry";
+				setError(message);
+			} finally {
+				setLoading(false);
 			}
 		}
 
-		checkAuth();
-		
-		// Set date on client side only to avoid hydration mismatch
-		setDisplayDate(new Date().toLocaleDateString("en-GB", {
-			weekday: "long",
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-		}));
-	}, [router]);
+		loadEntry();
+	}, [router, entryId]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -45,18 +50,59 @@ export default function NewEntryPage() {
 			return;
 		}
 
-		setLoading(true);
+		setSaving(true);
 
 		try {
-			await apiCreateEntry({ title, content });
+
+			await apiUpdateEntry(entryId, { title, content });
 			router.push("/dashboard");
 		} catch (err: unknown) {
-			const message = err instanceof Error ? err.message : "Failed to create entry";
+			console.error('Update failed:', err);
+			const message = err instanceof Error ? err.message : "Failed to update entry";
 			setError(message);
 		} finally {
-			setLoading(false);
+			setSaving(false);
 		}
 	};
+
+	if (loading) {
+		return (
+			<div className="min-h-screen">
+				<Header />
+				<div className="max-w-3xl mx-auto px-6 py-12">
+					<p className="text-warm-gray text-center">Loading...</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (error && !title) {
+		return (
+			<div className="min-h-screen">
+				<Header />
+				<div className="max-w-3xl mx-auto px-6 py-12">
+					<p className="text-red-600 text-center">{error}</p>
+					<button
+						onClick={() => router.push("/dashboard")}
+						className="btn-secondary mt-4 mx-auto block"
+					>
+						Back to Dashboard
+					</button>
+				</div>
+			</div>
+		);
+	}
+
+	const displayDate = new Date(createdAt).toLocaleDateString("en-GB", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+	});
+
 	return (
 		<div className="min-h-screen">
 			<Header />
@@ -70,7 +116,7 @@ export default function NewEntryPage() {
 						← Back to entries
 					</button>
 					<h1 className="text-4xl font-serif text-dark-brown mb-2">
-						New Entry
+						Edit Entry
 					</h1>
 					<p className="text-warm-gray text-sm">{displayDate}</p>
 				</div>
@@ -91,7 +137,7 @@ export default function NewEntryPage() {
 							className="input-field text-xl font-serif"
 							placeholder="Give your entry a title..."
 							required
-							disabled={loading}
+							disabled={saving}
 						/>
 					</div>
 
@@ -109,7 +155,7 @@ export default function NewEntryPage() {
 							className="input-field min-h-[400px] resize-y leading-relaxed"
 							placeholder="Write your thoughts..."
 							required
-							disabled={loading}
+							disabled={saving}
 						/>
 					</div>
 
@@ -120,14 +166,14 @@ export default function NewEntryPage() {
 					)}
 
 					<div className="flex gap-4">
-						<button type="submit" className="btn-primary" disabled={loading}>
-							{loading ? "Saving..." : "Save Entry"}
+						<button type="submit" className="btn-primary" disabled={saving}>
+							{saving ? "Saving..." : "Update Entry"}
 						</button>
 						<button
 							type="button"
 							onClick={() => router.back()}
 							className="btn-secondary"
-							disabled={loading}
+							disabled={saving}
 						>
 							Cancel
 						</button>

@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { apiSignIn } from '@/lib/api/auth'
 import Link from 'next/link'
-import { signIn } from '@/lib/supabase/auth'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -18,12 +18,13 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await signIn({ email, password })
+      await apiSignIn({ email, password })
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred during login';
+      setError(message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -84,7 +85,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-warm-gray">
-              Don't have an account?{' '}
+              {"Don't have an account? "}
               <Link href="/signup" className="text-dark-brown hover:underline">
                 Sign up
               </Link>

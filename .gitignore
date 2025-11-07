@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /npm-cache
+.npm-cache
 /.pnp
 .pnp.*
 .yarn/*
@@ -24,6 +25,7 @@
 # misc
 .DS_Store
 *.pem
+/personal-docs
 
 # debug
 npm-debug.log*
