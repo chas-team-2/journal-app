@@ -1,6 +1,7 @@
 # Node dependencies & cache
 node_modules
 npm-cache
+.npm-cache
 .pnp
 .pnp.*
 .yarn
