@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { apiSignIn } from '@/lib/api/auth'
 import Link from 'next/link'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,16 +31,19 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-serif text-dark-brown mb-3">Journal</h1>
+          <h1 className="text-4xl font-serif text-dark-brown dark:text-dark-text mb-3">Journal</h1>
           <p className="text-warm-gray text-sm">Sign in to your account</p>
         </div>
 
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm mb-2 text-dark-brown">
+              <label htmlFor="email" className="block text-sm mb-2 text-dark-brown dark:text-dark-text">
                 Email
               </label>
               <input
@@ -54,7 +58,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm mb-2 text-dark-brown">
+              <label htmlFor="password" className="block text-sm mb-2 text-dark-brown dark:text-dark-text">
                 Password
               </label>
               <input
@@ -69,7 +73,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
                 {error}
               </div>
             )}
@@ -86,7 +90,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-warm-gray">
               {"Don't have an account? "}
-              <Link href="/signup" className="text-dark-brown hover:underline">
+              <Link href="/signup" className="text-dark-brown dark:text-dark-text hover:underline">
                 Sign up
               </Link>
             </p>
