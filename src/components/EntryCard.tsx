@@ -16,13 +16,13 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
   const [showConfirm, setShowConfirm] = useState(false)
 
   const formattedDate = new Date(entry.created_at).toLocaleDateString("en-GB", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-		hour: "2-digit",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-	});
+  });
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -54,34 +54,36 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
 
   return (
     <>
-      <div className="card w-full hover:shadow-lg transition-shadow relative">
-        <Link href={`/entries/${entry.id}`} className="cursor-pointer">
+      <Link href={`/entries/${entry.id}`} className="cursor-pointer block">
+        <div className="card w-full hover:shadow-lg transition-shadow relative">
           <div className="mb-3 sm:mb-4">
             <div className="text-xs text-warm-gray mb-2 tracking-wide uppercase">
               {formattedDate}
             </div>
             <h2 className="text-xl sm:text-2xl font-serif text-dark-brown mb-2 sm:mb-3">{entry.title}</h2>
-            </div>
-            <p className="text-dark-brown/80 leading-relaxed whitespace-pre-wrap-break-words">
-              {entry.content}
-            </p>
-        </Link>
-        <button
-          onClick={handleDeleteClick}
-          disabled={isDeleting}
-          className="absolute top-4 right-4 p-2 text-dark-brown hover:bg-beige rounded-sm transition-colors disabled:opacity-50"
-          aria-label="Delete entry"
-        >
-          <Trash2 size={20} />
-        </button>
-      </div>
+          </div>
+
+          <p className="text-dark-brown/80 leading-relaxed whitespace-pre-wrap-break-words">
+            {entry.content}
+          </p>
+
+          <button
+            onClick={handleDeleteClick}
+            disabled={isDeleting}
+            className="absolute top-4 right-4 p-2 text-dark-brown hover:bg-beige rounded-sm transition-colors disabled:opacity-50 cursor-pointer"
+            aria-label="Delete entry "
+          >
+            <Trash2 size={20} />
+          </button>
+        </div>
+      </Link>
 
       {showConfirm && (
-        <div 
-          className="fixed inset-0 bg-dark-brown/50 flex items-center justify-center z-50 px-4"
+        <div
+          className="fixed inset-0 bg-dark-brown/50 flex items-center justify-center z-50 px-4 [margin-block-end:0]"
           onClick={handleCancelDelete}
         >
-          <div 
+          <div
             className="bg-cream rounded-sm p-6 sm:p-8 max-w-md w-full shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
