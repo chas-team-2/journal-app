@@ -67,7 +67,7 @@ export default function DashboardPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-12">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-serif text-dark-brown mb-1 sm:mb-2">
+            <h2 className="text-2xl sm:text-3xl font-serif text-dark-brown dark:text-dark-text mb-1 sm:mb-2">
   Your Entries
 </h2>
             <p className="text-warm-gray text-sm">

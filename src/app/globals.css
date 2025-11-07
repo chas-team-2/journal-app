@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
 	--color-cream: #faf8f3;
 	--color-dark-brown: #3e2723;
 	--color-warm-gray: #8d8d8d;
 	--color-beige: #f5f1e8;
+	--color-dark-bg: #1a1a1a;
+	--color-dark-surface: #2d2d2d;
+	--color-dark-text: #e5e5e5;
 }
 
 @layer base {
 	body {
-		@apply bg-cream text-dark-brown;
+		@apply bg-cream text-dark-brown dark:bg-dark-bg dark:text-dark-text;
 	}
 
 	h1,
@@ -24,18 +29,18 @@
 
 @layer components {
 	.btn-primary {
-		@apply px-6 py-3 bg-dark-brown text-cream rounded-sm hover:bg-warm-gray transition-colors duration-200 font-sans text-sm tracking-wide;
+		@apply px-6 py-3 bg-dark-brown text-cream rounded-sm hover:bg-warm-gray transition-colors duration-200 font-sans text-sm tracking-wide dark:bg-dark-text dark:text-dark-bg dark:hover:bg-warm-gray;
 	}
 
 	.btn-secondary {
-		@apply px-6 py-3 border border-dark-brown text-dark-brown rounded-sm hover:bg-beige transition-colors duration-200 font-sans text-sm tracking-wide;
+		@apply px-6 py-3 border border-dark-brown text-dark-brown rounded-sm hover:bg-beige transition-colors duration-200 font-sans text-sm tracking-wide dark:border-dark-text dark:text-dark-text dark:hover:bg-dark-surface;
 	}
 
 	.input-field {
-		@apply w-full px-4 py-3 border border-warm-gray/30 rounded-sm bg-white focus:outline-none focus:border-dark-brown transition-colors duration-200;
+		@apply w-full px-4 py-3 border border-warm-gray/30 rounded-sm bg-white focus:outline-none focus:border-dark-brown transition-colors duration-200 dark:bg-dark-surface dark:border-warm-gray/50 dark:focus:border-dark-text;
 	}
 
 	.card {
-		@apply bg-white border border-warm-gray/20 rounded-sm p-8 shadow-sm;
+		@apply bg-white border border-warm-gray/20 rounded-sm p-8 shadow-sm dark:bg-dark-surface dark:border-warm-gray/30;
 	}
 }
