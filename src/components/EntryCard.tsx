@@ -60,17 +60,17 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
             <div className="text-xs text-warm-gray mb-2 tracking-wide uppercase">
               {formattedDate}
             </div>
-            <h2 className="text-xl sm:text-2xl font-serif text-dark-brown mb-2 sm:mb-3">{entry.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-serif text-dark-brown dark:text-dark-text mb-2 sm:mb-3">{entry.title}</h2>
           </div>
 
-          <p className="text-dark-brown/80 leading-relaxed whitespace-pre-wrap-break-words">
+          <p className="text-dark-brown/80 dark:text-dark-text/80 leading-relaxed whitespace-pre-wrap-break-words">
             {entry.content}
           </p>
 
           <button
             onClick={handleDeleteClick}
             disabled={isDeleting}
-            className="absolute top-4 right-4 p-2 text-dark-brown hover:bg-beige rounded-sm transition-colors disabled:opacity-50 cursor-pointer"
+            className="absolute top-4 right-4 p-2 text-dark-brown dark:text-dark-text hover:bg-beige dark:hover:bg-dark-bg rounded-sm transition-colors disabled:opacity-50 cursor-pointer"
             aria-label="Delete entry "
           >
             <Trash2 size={20} />
@@ -80,17 +80,17 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
 
       {showConfirm && (
         <div
-          className="fixed inset-0 bg-dark-brown/50 flex items-center justify-center z-50 px-4 [margin-block-end:0]"
+          className="fixed inset-0 bg-dark-brown/50 dark:bg-black/70 flex items-center justify-center z-50 px-4 [margin-block-end:0]"
           onClick={handleCancelDelete}
         >
           <div
-            className="bg-cream rounded-sm p-6 sm:p-8 max-w-md w-full shadow-xl"
+            className="bg-cream dark:bg-dark-surface rounded-sm p-6 sm:p-8 max-w-md w-full shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-serif text-dark-brown mb-4">
+            <h3 className="text-xl font-serif text-dark-brown dark:text-dark-text mb-4">
               Delete Entry
             </h3>
-            <p className="text-dark-brown/80 mb-6">
+            <p className="text-dark-brown/80 dark:text-dark-text/80 mb-6">
               Are you sure you want to delete this entry? This action cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
