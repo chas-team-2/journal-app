@@ -1,27 +1,27 @@
-# .github/workflows/docker-publish-render.yml
-name: Build & Push Docker Image for Render
+# .github/workflows/docker-publish.yml
+name: Docker Publish
 
 on:
   push:
     branches:
-      - main  # Trigger only on merges to main
+      - main  # Trigger only when main branch is updated
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
+      # Checkout the repository
       - uses: actions/checkout@v4
 
-      # 2. Log in to Docker Hub
+      # Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3. Build Docker image with NEXT_PUBLIC_* build-args
+      # Build the Docker image with Supabase build-args
       - name: Build Docker image
         run: |
           docker build \
@@ -29,15 +29,7 @@ jobs:
             --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
             -t chasteam2/journal-app:latest .
 
-      # 4. Push Docker image to Docker Hub
+      # Push the image to Docker Hub
       - name: Push Docker image
         run: |
           docker push chasteam2/journal-app:latest
-
-      # 5. Trigger Render deploy
-      - name: Trigger Render deploy
-        if: github.ref == 'refs/heads/main'
-        env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          curl -sS -f "$deploy_url"
