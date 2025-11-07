@@ -9,13 +9,14 @@ on:
 
 jobs:
   lint-and-tests:
+    name: Lint and Run Tests
     runs-on: ubuntu-latest
 
     steps:
-      # Clone the repo to provide to Github actions runner
+      # Clone the repo to provide to GitHub Actions runner
       - uses: actions/checkout@v4
 
-      # Setup node
+      # Setup Node.js
       - uses: actions/setup-node@v4
         with:
           node-version: 22
