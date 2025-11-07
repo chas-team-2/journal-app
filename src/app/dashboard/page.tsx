@@ -91,7 +91,11 @@ export default function DashboardPage() {
         ) : (
           <div className="space-y-8">
             {entries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} />
+              <EntryCard 
+                key={entry.id} 
+                entry={entry}
+                onDelete={() => setEntries(entries.filter(e => e.id !== entry.id))}
+              />
             ))}
           </div>
         )}

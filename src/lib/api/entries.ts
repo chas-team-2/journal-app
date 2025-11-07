@@ -75,3 +75,18 @@ export async function apiUpdateEntry(id: string, entry: NewEntry): Promise<Entry
 
   return data.entry
 }
+
+/**
+ * Delete an entry
+ */
+export async function apiDeleteEntry(id: string): Promise<void> {
+  const response = await fetch(`/api/entries/${id}`, {
+    method: 'DELETE',
+  })
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to delete entry')
+  }
+}
