@@ -33,3 +33,8 @@ jobs:
       - name: Push Docker image
         run: |
           docker push chasteam2/journal-app:latest
+
+      # 5. Trigger Render deploy
+      - name: Trigger Render deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
