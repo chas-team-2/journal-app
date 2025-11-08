@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "docker:dev": "docker rm -f journal-app-dev || true && docker build --build-arg NEXT_PUBLIC_SUPABASE_URL=$(grep NEXT_PUBLIC_SUPABASE_URL .env | cut -d '=' -f2-) --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep NEXT_PUBLIC_SUPABASE_ANON_KEY .env | cut -d '=' -f2-) -t journal-app:dev . && docker run --name journal-app-dev -p 3000:3000 --env-file .env journal-app:dev",
+    "docker:dev": "(docker stop journal-app-dev 2>/dev/null || true) && (docker rm -f journal-app-dev 2>/dev/null || true) && docker build --build-arg NEXT_PUBLIC_SUPABASE_URL=$(grep NEXT_PUBLIC_SUPABASE_URL .env | cut -d '=' -f2-) --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep NEXT_PUBLIC_SUPABASE_ANON_KEY .env | cut -d '=' -f2-) -t journal-app:dev . && docker run --name journal-app-dev -p 3000:3000 --env-file .env journal-app:dev",
     "types:generate": "npx supabase login && npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/supabase.ts"
   },
   "dependencies": {
