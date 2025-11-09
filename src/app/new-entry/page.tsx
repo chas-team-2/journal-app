@@ -23,7 +23,7 @@ export default function NewEntryPage() {
 		}
 
 		checkAuth();
-		
+
 		// Set date on client side only to avoid hydration mismatch
 		setDisplayDate(new Date().toLocaleDateString("en-GB", {
 			weekday: "long",
@@ -69,7 +69,7 @@ export default function NewEntryPage() {
 					>
 						← Back to entries
 					</button>
-					<h1 className="text-4xl font-serif text-dark-brown mb-2">
+					<h1 className="text-4xl font-serif ">
 						New Entry
 					</h1>
 					<p className="text-warm-gray text-sm">{displayDate}</p>
@@ -79,7 +79,7 @@ export default function NewEntryPage() {
 					<div>
 						<label
 							htmlFor="title"
-							className="block text-sm mb-2 text-dark-brown font-medium"
+							className="block text-sm mb-2 "
 						>
 							Title
 						</label>
@@ -98,7 +98,7 @@ export default function NewEntryPage() {
 					<div>
 						<label
 							htmlFor="content"
-							className="block text-sm mb-2 text-dark-brown font-medium"
+							className="block text-sm mb-2 "
 						>
 							Content
 						</label>
