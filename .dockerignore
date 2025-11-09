@@ -15,17 +15,20 @@ npm-cache
 out
 build
 coverage
+dist
 
 # Misc
 .DS_Store
 *.pem
 personal-docs
+README.md
 
 # Debug & logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lerna-debug.log*
 
 # Environment files
 # Exclude all .env files but keep .env.example
@@ -41,12 +44,38 @@ next-env.d.ts
 
 # Git & Docker
 .git
+.github
 .gitignore
 .dockerignore
+Dockerfile
+docker-compose*.yml
 
 # Editor & system files
 .vscode
 .idea
+*.swp
+*.swo
+*~
+
+# Testing
+tests
+__tests__
+*.test.*
+*.spec.*
+jest.config.*
+eslint.config.*
+
+# CI/CD
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# Scripts (if not needed in runtime)
+scripts
+
+# Documentation
+docs
+LICENSE
 
 # Viktigt: behåll src/ och public/ mappar
 !src/
