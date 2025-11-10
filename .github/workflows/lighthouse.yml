@@ -1,10 +1,8 @@
 # .github/workflows/lighthouse.yml
-name: Lighthouse Audit
+name: Lighthouse CI
 
 on:
     push:
-        branches: [develop]
-    pull_request:
         branches: [develop]
 
 jobs:
@@ -23,10 +21,10 @@ jobs:
             - run: npm run start &
             - run: npx wait-on http://localhost:3000
 
-            - uses: treosh/lighthouse-ci-action@v10
+            - uses: treosh/lighthouse-ci-action@v12
               with:
                   urls: |
                       http://localhost:3000
                   uploadArtifacts: true
-                  artifactName: report
+                  artifactName: lighthouse
                   temporaryPublicStorage: true
