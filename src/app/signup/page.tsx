@@ -48,7 +48,7 @@ export default function SignupPage() {
       </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-serif text-dark-brown dark:text-dark-text mb-3">Journal</h1>
+          <h1 className="text-4xl font-serif mb-3">Journal</h1>
           <p className="text-warm-gray text-sm">Create your account</p>
         </div>
 

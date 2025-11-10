@@ -115,7 +115,7 @@ export default function EditEntryPage() {
 					>
 						← Back to entries
 					</button>
-					<h1 className="text-4xl font-serif text-dark-brown mb-2">
+					<h1 className="text-4xl font-serif mb-2 ">
 						Edit Entry
 					</h1>
 					<p className="text-warm-gray text-sm">{displayDate}</p>
@@ -125,7 +125,7 @@ export default function EditEntryPage() {
 					<div>
 						<label
 							htmlFor="title"
-							className="block text-sm mb-2 text-dark-brown font-medium"
+							className="block text-sm mb-2 font-medium"
 						>
 							Title
 						</label>
@@ -144,7 +144,7 @@ export default function EditEntryPage() {
 					<div>
 						<label
 							htmlFor="content"
-							className="block text-sm mb-2 text-dark-brown font-medium"
+							className="block text-sm mb-2 font-medium"
 						>
 							Content
 						</label>
