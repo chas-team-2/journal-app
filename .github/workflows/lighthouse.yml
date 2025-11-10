@@ -4,6 +4,12 @@ lighthouse-audit:
     runs-on: ubuntu-latest
     needs: lint-and-tests # only run after lint-and-tests job passes
 
+    on:
+    pull_request:
+    branches: [develop]
+    push:
+    branches: [develop]
+
     steps:
         - name: Checkout repository
           uses: actions/checkout@v4
@@ -35,5 +41,5 @@ lighthouse-audit:
               urls: |
                   http://localhost:3000
               uploadArtifacts: true
-              artifactName: lighthouse_${{ github.run_number }}
+              artifactName: lighthouse_report
               temporaryPublicStorage: true
