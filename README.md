@@ -194,4 +194,28 @@ Imagen pushas automatiskt till Docker Hub (`chasteam2/journal-app:latest`) via G
 
 ---
 
+## AI-användning i projektet
+
+AI-verktyg (främst GitHub Copilot och ChatGPT) har använts som stöd i utvecklingen på följande områden:
+
+**Testing:**
+- Generering av Jest-testfiler för API-layer och komponenter
+- Hjälp med teststruktur och mock-data för Supabase
+
+**Docker & Deployment:**
+- Rekommendationer för optimering av Docker-image till 217MB.
+- Implementering av Next.js standalone output
+- Strategi för miljövariabler i Docker Hub och Render
+- Setup-instruktioner för Docker Hub och Render (manuella steg)
+- GitHub Actions workflows för Docker build och deploy
+- `docker:dev` script för förenklad lokal utveckling
+
+**Övrig utveckling:**
+- Kodgranskningar och förslag på best practices
+- Felsökning och problemlösning
+
+All AI-genererad kod har granskats, testats och anpassats av teamet innan merge till `develop` eller `main`.
+
+---
+
 ## Reflektioner
