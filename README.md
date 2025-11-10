@@ -135,7 +135,7 @@ Vi använder [GitHub Projects](https://github.com/orgs/chas-team-2/projects/1) f
 
 ### CI/CD Pipeline
 
-Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säkerställer kodkvalitet och effektiv deployment. Pipelinen består av tre workflows som arbetar tillsammans:
+Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säkerställer kodkvalitet och effektiv deployment. Pipelinen består av fyra workflows som arbetar tillsammans:
 
 #### 1. CI Workflow (`.github/workflows/ci.yml`)
 **Trigger:** Push eller Pull Request till `develop`  
@@ -149,7 +149,20 @@ Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säk
 
 **Varför:** Detta fångar upp buggar och kodproblem tidigt i utvecklingsprocessen, innan de når `main`. Alla förändringar till `develop` måste passera dessa kontroller.
 
-#### 2. Docker Publish Workflow (`.github/workflows/docker-publish.yml`)
+#### 2. Lighthouse CI Workflow (`.github/workflows/lighthouse.yml`)
+**Trigger:** Pull Request till `develop`  
+**Syfte:** Automatisk prestanda- och kvalitetsövervakning
+
+**Steg:**
+- Checkar ut koden
+- Installerar dependencies och bygger applikationen
+- Startar produktionsserver lokalt
+- Kör Lighthouse-analys på `http://localhost:3000`
+- Laddar upp rapport som artifact och temporär public storage
+
+**Varför:** Lighthouse mäter prestanda, tillgänglighet, SEO och best practices. Detta hjälper oss att upptäcka prestandaregressioner innan de når produktion. Rapporter blir tillgängliga direkt i PR:en för snabb feedback.
+
+#### 3. Docker Publish Workflow (`.github/workflows/docker-publish.yml`)
 **Trigger:** Push till `main` (vanligtvis via release branch merge)  
 **Syfte:** Bygga och publicera produktionsklar Docker-image
 
@@ -162,7 +175,7 @@ Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säk
 
 **Varför:** Detta automatiserar byggprocessen och säkerställer att varje production-release får en konsistent, reproducerbar Docker-image. Build-args används för att baka in `NEXT_PUBLIC_*` variabler i byggtiden (Next.js kräver detta för client-side access).
 
-#### 3. Render Deploy Workflow (`.github/workflows/render-deploy.yml`)
+#### 4. Render Deploy Workflow (`.github/workflows/render-deploy.yml`)
 **Trigger:** När "Docker Publish" workflow slutförs framgångsrikt  
 **Syfte:** Automatisk deploy till Render
 
@@ -181,7 +194,7 @@ Alla känsliga värden lagras som GitHub Secrets:
 
 #### Flödesdiagram
 ```
-**develop branch** → CI (lint + test) ✅ → PR merge OK  
+**develop branch** → CI (lint + test) ✅ + Lighthouse (prestanda) 📊 → PR merge OK  
   ↓  
 **main branch** ← release merge ← develop (testad)  
   ↓  
@@ -192,7 +205,8 @@ Render Deploy → Trigger webhook → Render pulls latest image → Production l
 
 #### Fördelar med vår pipeline
 - **Automatisering:** Ingen manuell deploy behövs efter merge till `main`
-- **Kvalitetssäkring:** CI körs på varje förändring till `develop`
+- **Kvalitetssäkring:** CI och Lighthouse körs på varje PR till `develop`
+- **Prestandaövervakning:** Lighthouse rapporter fångar prestandaregressioner tidigt
 - **Reproducerbarhet:** Samma Docker-image används i alla miljöer
 - **Säkerhet:** Secrets hanteras centralt i GitHub
 - **Transparens:** Alla deployments syns i Actions-loggen
