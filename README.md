@@ -46,9 +46,9 @@ npm install
 
 ### 2. Set Up Supabase
 
-1. Skapa nytt projekt på supabase
-2. Kör allt som finns i `src/supabase/schema.sql` i SQL-editorn
-3. Kopiera API-nycklarna från Supabase till .env
+1. Create a new project on Supabase
+2. Run all SQL commands from `src/supabase/schema.sql` in the SQL Editor
+3. Copy the API keys from Supabase to your `.env` file
 
 ```env
 # Required for runtime
