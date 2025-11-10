@@ -3,30 +3,30 @@
 name: CI
 
 on:
-    push:
-        branches: [develop]
-    pull_request:
-        branches: [develop]
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
 
 jobs:
-    lint-and-tests:
-        name: Lint and Run Tests
-        runs-on: ubuntu-latest
+  lint-and-tests:
+    name: Lint and Run Tests
+    runs-on: ubuntu-latest
 
-        steps:
-            # Clone the repo to provide to GitHub Actions runner
-            - uses: actions/checkout@v4
+    steps:
+      # Clone the repo to provide to GitHub Actions runner
+      - uses: actions/checkout@v4
 
-            # Setup Node.js
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 22
+      # Setup Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-            # Install dependencies
-            - run: npm ci
+      # Install dependencies
+      - run: npm ci
 
-            # Run linter
-            - run: npm run lint
+      # Run linter
+      - run: npm run lint
 
-            # Run tests
-            - run: npm test
+      # Run tests
+      - run: npm test
