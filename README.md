@@ -126,4 +126,22 @@ Detaljerade riktlinjer finns i vårt gemensamma Google Doc (låst).
 
 ---
 
+### Commit-historik
+
+Vi strävar efter en tydlig och konsekvent commit-historik: **main** är alltid stabil och uppdateras endast via release-brancher, medan **develop** är arbetsyta för all utveckling. Kortlivade **feature-brancher** skapas från develop för nya funktioner eller bugfixar, och **release-brancher** för stabila releaser. Alla merges till develop kräver minst en review.  
+
+**Commit-meddelanden:** korta, beskrivande, skrivna i imperativ form (t.ex. `Add login validation`), kopplade till issues i task board när det är relevant.  
+
+**Prefix-typer vi använder:**  
+- `chore:` – underhåll och konfiguration (docker, dependencies)  
+- `ci:` – CI/CD workflow-ändringar  
+- `fix:` / `bugfix:` – bugfixar  
+- `feature:` – nya funktioner  
+- `test:` / `Test:` – testfiler  
+- `readme:` – dokumentation  
+
+**Mönster:** små bokstäver efter kolon, PR merges visar branch-namn som följer samma konvention.  
+
+
+
 ## Reflektioner
