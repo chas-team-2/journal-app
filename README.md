@@ -124,24 +124,74 @@ Alla ändringar mergas tillbaka till `develop` via pull requests med minst en co
 
 Detaljerade riktlinjer finns i vårt gemensamma Google Doc (låst).
 
----
-
 ### Commit-historik
 
-Vi strävar efter en tydlig och konsekvent commit-historik: **main** är alltid stabil och uppdateras endast via release-brancher, medan **develop** är arbetsyta för all utveckling. Kortlivade **feature-brancher** skapas från develop för nya funktioner eller bugfixar, och **release-brancher** för stabila releaser. Alla merges till develop kräver minst en review.  
+Vi följer Conventional Commits-format med prefix för att hålla historiken tydlig och strukturerad:
 
-**Commit-meddelanden:** korta, beskrivande, skrivna i imperativ form (t.ex. `Add login validation`), kopplade till issues i task board när det är relevant.  
-
-**Prefix-typer vi använder:**  
+**Prefix vi använder:**  
 - `chore:` – underhåll och konfiguration (docker, dependencies)  
 - `ci:` – CI/CD workflow-ändringar  
 - `fix:` / `bugfix:` – bugfixar  
 - `feature:` – nya funktioner  
-- `test:` / `Test:` – testfiler  
-- `readme:` – dokumentation  
+- `test:` – testfiler  
+- `readme:` / `docs:` – dokumentation  
 
-**Mönster:** små bokstäver efter kolon, PR merges visar branch-namn som följer samma konvention.  
+Commit-meddelanden är korta, beskrivande och skrivna i imperativ form (t.ex. `fix: resolve login validation error`). De kopplas till issues i vårt GitHub Projects board när det är relevant.
 
+### Projektplanering
 
+Vi använder [GitHub Projects](https://github.com/orgs/chas-team-2/projects/1) för att organisera uppgifter och spåra progress. Alla issues och tasks kopplas till projektet och uppdateras kontinuerligt under utvecklingen. Detta ger oss en gemensam överblick av vad som är klart, pågår, eller väntar.
+
+---
+
+## Docker Setup
+
+Vi har containeriserat applikationen med fokus på säkerhet, optimering och enkel deployment. Docker-imagen är optimerad till **217MB** genom att använda Next.js standalone build och multi-stage builds.
+
+### Snabbstart för teammedlemmar
+
+**Rekommendation:** Installera [Docker Desktop](https://www.docker.com/products/docker-desktop/) för enklast setup.
+
+Kör sedan direkt med vårt development script:
+```bash
+npm run docker:dev
+```
+
+Detta script läser automatiskt din `.env`-fil, bygger imagen och startar containern på `http://localhost:3000`.
+
+### Manuell Docker-användning
+
+**Bygga imagen:**
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=your-url \
+  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=your-key \
+  -t journal-app:latest .
+```
+
+**Köra containern:**
+```bash
+docker run -p 3000:3000 --env-file .env journal-app:latest
+```
+
+### Optimeringar vi implementerat
+
+**Dockerfile (multi-stage build):**
+- **Builder stage:** Node.js 22 Alpine (minimal base image), installerar dependencies och bygger Next.js standalone output
+- **Runner stage:** Kopierar endast nödvändiga filer (.next/standalone, static assets, public), kör som non-root user (`nextjs`) för säkerhet, och startar med minimal `server.js`
+
+**`.dockerignore`:**
+Exkluderar allt som inte behövs i runtime: `node_modules`, `.git`, `.github`, test-filer, CI/CD-configs, dokumentation, och development tools. Detta minskar build context och final image size drastiskt.
+
+**Next.js Standalone Output:**
+Aktiverat i `next.config.ts` med `output: 'standalone'`. Next.js analyserar dependencies och paketerar bara vad som faktiskt används, vilket reducerar storleken till 217MB.
+
+**Obs:** Standalone-inställningen används endast i Docker/Render-deploy. Vercel-deploy hanterar filer med sin egna optimeringsprocess och ignorerar denna inställning.
+
+### Deployment
+
+Imagen pushas automatiskt till Docker Hub (`chasteam2/journal-app:latest`) via GitHub Actions vid merge till `main`. Render pullar sedan denna image för production deploy.
+
+---
 
 ## Reflektioner
