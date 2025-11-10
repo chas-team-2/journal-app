@@ -1,31 +1,70 @@
 # .github/workflows/ci.yml
+
 name: CI
 
 on:
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+    push:
+        branches: [develop]
+    pull_request:
+        branches: [develop]
 
 jobs:
-  lint-and-tests:
-    name: Lint and Run Tests
-    runs-on: ubuntu-latest
+    lint-and-tests:
+        name: Lint and Run Tests
+        runs-on: ubuntu-latest
 
-    steps:
-      # Clone the repo to provide to GitHub Actions runner
-      - uses: actions/checkout@v4
+        steps:
+            # Clone the repo to provide to GitHub Actions runner
+            - uses: actions/checkout@v4
 
-      # Setup Node.js
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
+            # Setup Node.js
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
 
-      # Install dependencies
-      - run: npm ci
+            # Install dependencies
+            - run: npm ci
 
-      # Run linter
-      - run: npm run lint
+            # Run linter
+            - run: npm run lint
 
-      # Run tests
-      - run: npm test
+            # Run tests
+            - run: npm test
+
+    lighthouse-audit:
+        name: Lighthouse Audit
+        runs-on: ubuntu-latest
+        needs: lint-and-tests # only run after lint-and-tests job passes
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build the app
+              run: npm run build
+              # skip if your app doesn’t need build (e.g., Next.js with "npm start" already handles it)
+
+            - name: Start local server
+              run: npm run start &
+              # starts the server in the background
+
+            - name: Wait for the app to be ready
+              run: npx wait-on http://localhost:3000
+              # waits until your app is available on port 3000
+              # change the URL if your app runs on a different port
+
+            - name: Run Lighthouse CI
+              uses: treosh/lighthouse-ci-action@v10
+              with:
+                  urls: |
+                      http://localhost:3000
+                  uploadArtifacts: true
+                  temporaryPublicStorage: true
