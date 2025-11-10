@@ -3,7 +3,7 @@
 A minimalist journaling application built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
 
 
-👥 Team:  [Fares Elloumi](https://github.com/Fares-elloumi), [Cristian Pencheff](https://github.com/cribepencheff), [Aleksa Solevic](https://github.com/AleksaSolevic), [Ephraim Valladares](https://github.com/EphraimVC)
+👥 Team: [Fares Elloumi](https://github.com/Fares-elloumi), [Cristian Pencheff](https://github.com/cribepencheff), [Aleksa Solevic](https://github.com/AleksaSolevic), [Ephraim Valladares](https://github.com/EphraimVC)
 
 
 🔗 Deploy on Vercel (main): https://journal-app-chasteam2.vercel.app/  
@@ -23,15 +23,6 @@ A minimalist journaling application built with Next.js 14, TypeScript, Tailwind 
 ## Architecture
 
 The application uses a **backend API layer** with Next.js Route Handlers instead of direct client-side Supabase calls. This provides:
-
-- Better security (sensitive operations happen server-side)
-- Separation of concerns
-- Easier testing and maintenance
-- Centralized error handling
-
-## Architecture
-
-The application uses a backend API layer with Next.js Route Handlers instead of direct client-side Supabase calls. This provides:
 
 - Better security (sensitive operations happen server-side)
 - Separation of concerns
@@ -79,7 +70,6 @@ The app is deployed publicly on Vercel and Render with "Allow new users" disable
 
 Test account credentials have been provided separately via email or private channels.
 
-
 ## Available Scripts
 
 - `npm run dev` - Start the development server
@@ -99,6 +89,7 @@ This app follows a minimalist, editorial design approach:
 - **Spacing:** Generous whitespace for readability
 - **Layout:** Clean, centered layouts with maximum content width
 - **Interaction:** Subtle hover states and transitions
+- **Dark/Light Theme:** Supports both light and dark modes, respecting user system preferences
 
 
 ## Resources
@@ -110,7 +101,7 @@ This app follows a minimalist, editorial design approach:
 
 ---
 
-## ⚙️ Utvecklingsprocess och Projekthantering
+## ⚙️ Utvecklingsprocess, Projekthantering och Reflektioner
 
 ### Branching-strategi
 
@@ -141,6 +132,94 @@ Commit-meddelanden är korta, beskrivande och skrivna i imperativ form (t.ex. `f
 ### Projektplanering
 
 Vi använder [GitHub Projects](https://github.com/orgs/chas-team-2/projects/1) för att organisera uppgifter och spåra progress. Alla issues och tasks kopplas till projektet och uppdateras kontinuerligt under utvecklingen. Detta ger oss en gemensam överblick av vad som är klart, pågår, eller väntar.
+
+### CI/CD Pipeline
+
+Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säkerställer kodkvalitet och effektiv deployment. Pipelinen består av tre workflows som arbetar tillsammans:
+
+#### 1. CI Workflow (`.github/workflows/ci.yml`)
+**Trigger:** Push eller Pull Request till `develop`  
+**Syfte:** Kvalitetskontroll innan kod mergas
+
+**Steg:**
+- Checkar ut koden
+- Installerar Node.js 22 och dependencies (`npm ci`)
+- Kör ESLint för att hitta kodproblem
+- Kör Jest-tester för att verifiera funktionalitet
+
+**Varför:** Detta fångar upp buggar och kodproblem tidigt i utvecklingsprocessen, innan de når `main`. Alla förändringar till `develop` måste passera dessa kontroller.
+
+#### 2. Docker Publish Workflow (`.github/workflows/docker-publish.yml`)
+**Trigger:** Push till `main` (vanligtvis via release branch merge)  
+**Syfte:** Bygga och publicera produktionsklar Docker-image
+
+**Steg:**
+- Checkar ut koden från `main`
+- Loggar in på Docker Hub med secrets (`DOCKER_USERNAME`, `DOCKER_PASSWORD`)
+- Bygger Docker-imagen med Supabase environment variables som build-args
+- Taggar imagen som `chasteam2/journal-app:latest`
+- Pushar imagen till Docker Hub
+
+**Varför:** Detta automatiserar byggprocessen och säkerställer att varje production-release får en konsistent, reproducerbar Docker-image. Build-args används för att baka in `NEXT_PUBLIC_*` variabler i byggtiden (Next.js kräver detta för client-side access).
+
+#### 3. Render Deploy Workflow (`.github/workflows/render-deploy.yml`)
+**Trigger:** När "Docker Publish" workflow slutförs framgångsrikt  
+**Syfte:** Automatisk deploy till Render
+
+**Steg:**
+- Väntar på att Docker Publish ska bli klar
+- Kontrollerar att föregående workflow lyckades
+- Triggar Render's deploy webhook via `curl POST`
+
+**Varför:** Detta skapar en seamless deployment-kedja: `main` → Docker Hub → Render. Vi använder `workflow_run` istället för att trigga direkt på `main` för att säkerställa att Docker-imagen verkligen är pushad och redo innan Render börjar dra ner den.
+
+#### Secrets som används
+Alla känsliga värden lagras som GitHub Secrets:
+- `DOCKER_USERNAME` / `DOCKER_PASSWORD` - Docker Hub credentials
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase config (public, men hanteras som secrets för konsistens)
+- `RENDER_DEPLOY_HOOK_URL` - Webhook för att trigga Render deploy
+
+#### Flödesdiagram
+```
+**develop branch** → CI (lint + test) ✅ → PR merge OK  
+  ↓  
+**main branch** ← release merge ← develop (testad)  
+  ↓  
+Docker Publish → Build image → Push to Docker Hub 🐳  
+  ↓  
+Render Deploy → Trigger webhook → Render pulls latest image → Production live 🚀
+```
+
+#### Fördelar med vår pipeline
+- **Automatisering:** Ingen manuell deploy behövs efter merge till `main`
+- **Kvalitetssäkring:** CI körs på varje förändring till `develop`
+- **Reproducerbarhet:** Samma Docker-image används i alla miljöer
+- **Säkerhet:** Secrets hanteras centralt i GitHub
+- **Transparens:** Alla deployments syns i Actions-loggen
+
+#### Vår avancerade CI/CD-pipeline  
+
+**Workflow chaining med `workflow_run`:**  
+Istället för att trigga alla workflows samtidigt använder vi `workflow_run` för att kedja Render Deploy efter Docker Publish. Detta säkerställer att Docker-imagen är helt pushad och tillgänglig innan Render försöker dra ner den. Utan detta kunde vi få race conditions där Render börjar deploy innan imagen finns på Docker Hub.
+
+**Separata deploy-målgrupper:**  
+Vi kör dubbel deployment för olika use cases:  
+- **Vercel:** Snabb, serverless deploy för development/staging (från `develop` branch) och även **main** för att testa produktion i Vercel-miljön ⚡  
+- **Render:** Containeriserad production deploy med vår egna Docker-image (från `main`)  
+
+Detta ger oss flexibilitet att testa i Vercel's miljö samtidigt som vi har full kontroll över container-baserad production.
+
+**Multi-stage Docker builds i CI:**  
+Vår Dockerfile använder multi-stage builds som skapar en minimal 217 MB image. Detta kräver korrekt hantering av build-args i CI-pipelinen för att baka in miljövariabler vid byggtiden. Alternativet (single-stage eller runtime env vars only) hade gett en större image eller inte fungerat med Next.js public environment variables.
+
+**Branch-baserad triggering:**  
+CI körs på `develop` för att fånga buggar tidigt, medan Docker build/deploy endast triggas från `main`. Detta separerar testing-fasen från production-deployment och minskar risken för att otestade ändringar når produktion.
+
+**Secrets management:**  
+All känslig data (Docker Hub credentials, deploy webhooks, API keys) hanteras som GitHub Secrets istället för att hardkodas eller committas. Detta är kritiskt för säkerhet och gör det enkelt att rotera credentials utan att ändra kod.
+
+Sammanfattningsvis ger vår setup en robust, säker och automatiserad pipeline som hanterar flera deployment-targets, säkerställer kodkvalitet och minimerar manuellt arbete – allt medan vi behåller full kontroll och transparens över processen.
+
 
 ---
 
@@ -210,12 +289,14 @@ AI-verktyg (främst GitHub Copilot och ChatGPT) har använts som stöd i utveckl
 - GitHub Actions workflows för Docker build och deploy
 - `docker:dev` script för förenklad lokal utveckling
 
+**Code Reviews:**
+- GitHub Copilot har använts för att granska Pull Requests
+- AI-assisterad identifiering av potentiella buggar och förbättringsområden
+- Förslag på kodförbättringar och best practices i PR-kommentarer
+
 **Övrig utveckling:**
 - Kodgranskningar och förslag på best practices
 - Felsökning och problemlösning
 
 All AI-genererad kod har granskats, testats och anpassats av teamet innan merge till `develop` eller `main`.
 
----
-
-## Reflektioner
