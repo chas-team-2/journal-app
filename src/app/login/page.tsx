@@ -36,14 +36,14 @@ export default function LoginPage() {
       </div>
       <div className="w-full max-w-md">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-serif text-dark-brown dark:text-dark-text mb-3">Journal</h1>
+          <h1 className="text-4xl font-serif mb-3">Journal</h1>
           <p className="text-warm-gray text-sm">Sign in to your account</p>
         </div>
 
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm mb-2 text-dark-brown dark:text-dark-text">
+              <label htmlFor="email" className="block text-sm mb-2 ">
                 Email
               </label>
               <input
@@ -58,7 +58,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm mb-2 text-dark-brown dark:text-dark-text">
+              <label htmlFor="password" className="block text-sm mb-2">
                 Password
               </label>
               <input
