@@ -3,6 +3,15 @@
 A minimalist journaling application built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
 
 
+👥 Team:  [Fares Elloumi](https://github.com/Fares-elloumi), [Cristian Pencheff](https://github.com/cribepencheff), [Aleksa Solevic](https://github.com/AleksaSolevic), [Ephraim Valladares](https://github.com/EphraimVC)
+
+
+🔗 Deploy on Vercel (main): https://journal-app-chasteam2.vercel.app/  
+🔄 Deploy on Vercel (develop, staging): https://journal-app-staging-chasteam2.vercel.app/  
+🐳 Deploy on Render via Docker Hub (main): https://journal-app-latest-3g4c.onrender.com/  
+✅ Task board: https://github.com/orgs/chas-team-2/projects/1  
+
+
 ## Tech Stack
 
 - **Frontend Framework:** Next.js 16 (App Router)
@@ -38,20 +47,13 @@ The application uses a backend API layer with Next.js Route Handlers instead of 
 
 ## Getting Started
 
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url> # eller forka
-cd cloud-examinerande-uppgift-2-grupp
-```
-
-### 2. Install Dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Set Up Supabase
+### 2. Set Up Supabase
 
 1. Skapa nytt projekt på supabase
 2. Kör allt som finns i `src/supabase/schema.sql` i SQL-editorn
@@ -71,33 +73,12 @@ SUPABASE_PROJECT_ID=your-project-id-here
 npm run types:generate
 ```
 
-### 4. Test Account for Demo / Review
+### 3. Test Account for Demo / Review
 
-The app is deployed publicly (e.g., on Vercel) with “Allow new users” disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
+The app is deployed publicly on Vercel and Render with "Allow new users" disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
 
-We have created one or more test accounts for instructors or examiners, shared separately via email or private channels.
+Test account credentials have been provided separately via email or private channels.
 
-In README, these accounts are referenced **without revealing credentials**:
-
-```bash
-# Test Account
-Use the provided test account credentials to log in.  
-Set environment variables according to `.env.example`.
-```
-
-### 4. Test Account for Demo / Review
-
-The app is deployed publicly (e.g., on Vercel) with “Allow new users” disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
-
-We have created one or more test accounts for instructors or examiners, shared separately via email or private channels.
-
-In README, these accounts are referenced **without revealing credentials**:
-
-```bash
-# Test Account
-Use the provided test account credentials to log in.  
-Set environment variables according to `.env.example`.
-```
 
 ## Available Scripts
 
@@ -107,6 +88,7 @@ Set environment variables according to `.env.example`.
 - `npm run lint` - Run ESLint to check code quality
 - `npm run test` - Run Jest tests
 - `npm run types:generate` - Regenerate TypeScript types from Supabase database schema
+- `npm run docker:dev` - Start Docker development environment with auto-loaded .env variables
 
 ## Design Philosophy
 
@@ -126,4 +108,22 @@ This app follows a minimalist, editorial design approach:
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs)
 
-## Fyll på med era reflektioner nedan!
+---
+
+## ⚙️ Utvecklingsprocess och Projekthantering
+
+### Branching-strategi
+
+Vi använder trunk-based development där `main` alltid innehåller stabil, produktionsklar kod och `develop` är vår integrationsbranch. Feature branches skapas från `develop` med namnmönster som `feature/edit-entry`, `fix/delete-bug`, eller `chore/docker-optimize`.
+
+Alla ändringar mergas tillbaka till `develop` via pull requests med minst en code review. När vi är redo för release skapas en `release/<version>-<datum>` branch från `develop` som mergas till `main` efter godkänd testning.
+
+**Deploy-flöde:**
+- Push till `develop` → Vercel preview deploy (staging)
+- Merge till `main` → Docker Hub build → Render + Vercel production deploy
+
+Detaljerade riktlinjer finns i vårt gemensamma Google Doc (låst).
+
+---
+
+## Reflektioner
