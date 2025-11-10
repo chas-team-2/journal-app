@@ -28,5 +28,5 @@ jobs:
                   urls: |
                       http://localhost:3000
                   uploadArtifacts: true
-                  artifactName: lighthouse_report
+                  artifactName: lighthouse-report
                   temporaryPublicStorage: true
