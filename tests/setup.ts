@@ -12,7 +12,7 @@ if (!Response.prototype.json) {
 // Mock NextResponse for testing
 jest.mock('next/server', () => ({
   NextResponse: {
-    json: (data: any, init?: ResponseInit) => {
+    json: (data: unknown, init?: ResponseInit) => {
       return new Response(JSON.stringify(data), {
         ...init,
         headers: {
