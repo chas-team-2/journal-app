@@ -107,7 +107,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              className="btn-primary w-full"
+              className="btn-primary w-full cursor-pointer"
               disabled={loading}
             >
               {loading ? 'Creating account...' : 'Sign Up'}
@@ -117,7 +117,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-warm-gray">
               Already have an account?{' '}
-              <Link href="/login" className="text-dark-brown dark:text-dark-text hover:underline">
+              <Link href="/login" className="text-dark-brown dark:text-dark-text hover:underline cursor-pointer">
                 Sign in
               </Link>
             </p>

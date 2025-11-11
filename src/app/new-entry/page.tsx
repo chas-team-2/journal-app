@@ -120,13 +120,13 @@ export default function NewEntryPage() {
 					)}
 
 					<div className="flex gap-4">
-						<button type="submit" className="btn-primary" disabled={loading}>
+						<button type="submit" className="btn-primary cursor-pointer" disabled={loading}>
 							{loading ? "Saving..." : "Save Entry"}
 						</button>
 						<button
 							type="button"
 							onClick={() => router.back()}
-							className="btn-secondary"
+							className="btn-secondary cursor-pointer"
 							disabled={loading}
 						>
 							Cancel
