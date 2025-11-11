@@ -111,7 +111,7 @@ export default function EditEntryPage() {
 				<div className="mb-8">
 					<button
 						onClick={() => router.back()}
-						className="text-warm-gray hover:text-dark-brown text-sm mb-4"
+						className="text-warm-gray hover:text-dark-brown  dark:hover:text-beige cursor-pointer text-sm mb-4"
 					>
 						← Back to entries
 					</button>
@@ -166,13 +166,13 @@ export default function EditEntryPage() {
 					)}
 
 					<div className="flex gap-4">
-						<button type="submit" className="btn-primary" disabled={saving}>
+						<button type="submit" className="btn-primary cursor-pointer" disabled={saving}>
 							{saving ? "Saving..." : "Update Entry"}
 						</button>
 						<button
 							type="button"
 							onClick={() => router.back()}
-							className="btn-secondary"
+							className="btn-secondary cursor-pointer"
 							disabled={saving}
 						>
 							Cancel
