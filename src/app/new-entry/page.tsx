@@ -65,7 +65,7 @@ export default function NewEntryPage() {
 				<div className="mb-8">
 					<button
 						onClick={() => router.back()}
-						className="text-warm-gray hover:text-dark-brown text-sm mb-4"
+						className="text-warm-gray hover:text-dark-brown dark:hover:text-beige cursor-pointer text-sm mb-4"
 					>
 						← Back to entries
 					</button>

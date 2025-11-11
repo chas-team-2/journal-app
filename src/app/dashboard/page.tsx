@@ -75,7 +75,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <Link href="/new-entry" className="self-stretch sm:self-auto">
-            <button className="btn-primary w-full sm:w-auto sm:min-w-160px">
+            <button className="btn-primary w-full sm:w-auto sm:min-w-160px cursor-pointer">
               New Entry
             </button>
           </Link>
