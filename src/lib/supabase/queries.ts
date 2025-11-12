@@ -146,10 +146,36 @@ export async function updateEntry(id: string, entry: NewEntry): Promise<Entry> {
 /**
  * Delete an entry
  * RLS ensures user can only delete their own entries
+ * Also deletes associated files from storage
  */
 export async function deleteEntry(id: string): Promise<void> {
   const supabase = await createClient()
 
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (user) {
+    // Delete associated files from storage
+    const folderPath = `${user.id}/${id}`
+    
+    try {
+      const { data: files } = await supabase.storage
+        .from('entry-files')
+        .list(folderPath)
+      
+      if (files && files.length > 0) {
+        const filesToDelete = files.map(f => `${folderPath}/${f.name}`)
+        await supabase.storage
+          .from('entry-files')
+          .remove(filesToDelete)
+      }
+    } catch (storageError) {
+      // Log but don't fail the delete if storage cleanup fails
+      console.error('Failed to delete storage files:', storageError)
+    }
+  }
+
+  // Delete the entry from database
   const { error } = await supabase
     .from('entries')
     .delete()
