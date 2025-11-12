@@ -2,13 +2,13 @@ import { createClient } from './server'
 import { Entry, NewEntry } from '@/types'
 
 /**
- * Fetch all entries for the authenticated user
+ * Fetch all entries for the authenticated user with file information
  * RLS automatically filters by user_id
  */
 export async function getEntries(): Promise<Entry[]> {
   const supabase = await createClient()
 
-  const { data, error } = await supabase
+  const { data: entries, error } = await supabase
     .from('entries')
     .select('*')
     .order('created_at', { ascending: false })
@@ -17,7 +17,53 @@ export async function getEntries(): Promise<Entry[]> {
     throw error
   }
 
-  return data || []
+  if (!entries || entries.length === 0) {
+    return []
+  }
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  // Fetch file information for all entries in parallel
+  const entriesWithFiles = await Promise.all(
+    entries.map(async (entry) => {
+      try {
+        const folderPath = `${user.id}/${entry.id}`
+        
+        const { data: files } = await supabase.storage
+          .from('entry-files')
+          .list(folderPath)
+
+        if (files && files.length > 0) {
+          const firstFile = files[0]
+          const filePath = `${folderPath}/${firstFile.name}`
+
+          const { data: signedUrlData } = await supabase.storage
+            .from('entry-files')
+            .createSignedUrl(filePath, 3600)
+
+          if (signedUrlData) {
+            return {
+              ...entry,
+              file: {
+                fileName: firstFile.name,
+                fileUrl: signedUrlData.signedUrl,
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to fetch file for entry ${entry.id}:`, error)
+      }
+
+      return { ...entry, file: null }
+    })
+  )
+
+  return entriesWithFiles
 }
 
 /**
