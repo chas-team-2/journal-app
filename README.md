@@ -24,11 +24,11 @@ A minimalist journaling application built with Next.js 16, TypeScript, Tailwind 
 ## Features
 
 ### Core Functionality
-- ✍️ **Create & Edit Journal Entries** - Write and update your daily thoughts
-- 🗑️ **Delete Entries** - Remove entries with confirmation dialog
-- 📋 **Entry Management** - View all entries on a dashboard with timestamps
-- 🔐 **Secure Authentication** - Email/password login and signup via Supabase
-- 🌓 **Dark/Light Mode** - Automatic theme switching based on system preferences
+- **Create & Edit Journal Entries** - Write and update your daily thoughts
+- **Delete Entries** - Remove entries with confirmation dialog
+- **Entry Management** - View all entries on a dashboard with timestamps
+- **Secure Authentication** - Email/password login and signup via Supabase
+- **Dark/Light Mode** - Automatic theme switching based on system preferences
 
 ### File Attachments
 - **PDF Upload** - Attach PDF files (max 2MB) to journal entries
@@ -104,7 +104,13 @@ npm run types:generate
 
 The app is deployed publicly on Vercel and Render with "Allow new users" disabled in Supabase to prevent unauthorized sign-ups. Only existing users can log in.
 
-Test account credentials have been provided separately via email or private channels.
+**Test account credentials:**
+```
+Email: test@example.com
+Password: Test1234!
+```
+
+Feel free to use this account to explore the application's features including creating, editing, and deleting journal entries, as well as uploading PDF attachments.
 
 ## Available Scripts
 
