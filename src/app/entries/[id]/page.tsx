@@ -18,6 +18,7 @@ export default function EditEntryPage() {
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [fileInfo, setFileInfo] = useState<{ fileName: string; fileUrl: string } | null>(null);
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	useEffect(() => {
 		async function loadEntry() {
@@ -78,8 +79,25 @@ export default function EditEntryPage() {
 		setSaving(true);
 
 		try {
-
+			// Update entry first
 			await apiUpdateEntry(entryId, { title, content });
+
+			// If a new file is selected, upload it
+			if (selectedFile) {
+				const formData = new FormData();
+				formData.append('file', selectedFile);
+				formData.append('entryId', entryId);
+
+				const uploadResponse = await fetch('/api/files', {
+					method: 'POST',
+					body: formData,
+				});
+
+				if (!uploadResponse.ok) {
+					console.error('File upload failed, but entry was updated');
+				}
+			}
+
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			console.error('Update failed:', err);
@@ -187,7 +205,9 @@ export default function EditEntryPage() {
 					<FileUpload
 						entryId={entryId}
 						existingFile={fileInfo}
-						onUploadComplete={loadFileInfo}
+						selectedFile={selectedFile}
+						onFileSelect={setSelectedFile}
+						onDeleteFile={loadFileInfo}
 						disabled={saving}
 					/>
 

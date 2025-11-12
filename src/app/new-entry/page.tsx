@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiCreateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
-import { Upload, X, FileText } from "lucide-react";
+import FileUpload from "@/components/FileUpload";
 
 export default function NewEntryPage() {
 	const router = useRouter();
@@ -15,7 +15,6 @@ export default function NewEntryPage() {
 	const [loading, setLoading] = useState(false);
 	const [displayDate, setDisplayDate] = useState("");
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
-	const [fileError, setFileError] = useState<string | null>(null);
 
 	useEffect(() => {
 		async function checkAuth() {
@@ -38,31 +37,6 @@ export default function NewEntryPage() {
 			hour12: false,
 		}));
 	}, [router]);
-
-	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
-
-		// Validate file type
-		if (file.type !== 'application/pdf') {
-			setFileError('Only PDF files are allowed');
-			return;
-		}
-
-		// Validate file size
-		if (file.size > 2 * 1024 * 1024) {
-			setFileError('File is too large (max 2MB)');
-			return;
-		}
-
-		setFileError(null);
-		setSelectedFile(file);
-	};
-
-	const handleRemoveFile = () => {
-		setSelectedFile(null);
-		setFileError(null);
-	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -160,59 +134,11 @@ export default function NewEntryPage() {
 						/>
 					</div>
 
-					<div className="space-y-3">
-						<label className="block text-sm font-medium text-dark-brown dark:text-dark-text">
-							PDF Attachment (optional)
-						</label>
-
-						{selectedFile ? (
-							<div className="flex items-center justify-between p-3 bg-beige/50 dark:bg-dark-surface/50 rounded-sm border border-warm-gray/20">
-								<div className="flex items-center gap-3 min-w-0 flex-1">
-
-									<FileText className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-
-									<div className="min-w-0 flex-1">
-										<p className="text-sm font-medium text-dark-brown dark:text-dark-text truncate">
-											{selectedFile.name}
-										</p>
-										<p className="text-xs text-warm-gray">
-											{(selectedFile.size / 1024).toFixed(1)} KB
-										</p>
-									</div>
-								</div>
-								<button
-									type="button"
-									onClick={handleRemoveFile}
-									disabled={loading}
-									className="p-2 text-warm-gray hover:text-red-600 dark:hover:text-white transition-colors disabled:opacity-50 cursor-pointer flex-shrink-0"
-									title="Remove file"
-								>
-									<X className="w-4 h-4" />
-								</button>
-							</div>
-						) : (
-							<label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-warm-gray/30 dark:border-warm-gray/20 rounded-sm cursor-pointer hover:border-warm-gray/50 dark:hover:border-warm-gray/40 transition-colors">
-								<input
-									type="file"
-									accept="application/pdf"
-									onChange={handleFileSelect}
-									disabled={loading}
-									className="hidden"
-								/>
-								<Upload className="w-8 h-8 text-warm-gray mb-2" />
-								<p className="text-sm text-dark-brown dark:text-dark-text">
-									Click to upload PDF
-								</p>
-								<p className="text-xs text-warm-gray mt-1">
-									Max 2MB
-								</p>
-							</label>
-						)}
-
-						{fileError && (
-							<p className="text-sm text-red-600 dark:text-red-400">{fileError}</p>
-						)}
-					</div>
+					<FileUpload
+						selectedFile={selectedFile}
+						onFileSelect={setSelectedFile}
+						disabled={loading}
+					/>
 
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm">

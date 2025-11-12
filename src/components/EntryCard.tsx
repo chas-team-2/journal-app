@@ -5,6 +5,7 @@ import { Trash2, FileText, Edit2 } from 'lucide-react'
 import { Entry } from '@/types'
 import { apiDeleteEntry } from '@/lib/api/entries'
 import { useState } from 'react'
+import ConfirmDialog from './ConfirmDialog'
 
 interface EntryCardProps {
   entry: Entry
@@ -30,9 +31,7 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
     setShowConfirm(true)
   }
 
-  const handleConfirmDelete = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleConfirmDelete = async () => {
     setIsDeleting(true)
     try {
       await apiDeleteEntry(entry.id)
@@ -46,9 +45,7 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
     }
   }
 
-  const handleCancelDelete = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleCancelDelete = () => {
     setShowConfirm(false)
   }
 
@@ -103,38 +100,16 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
       </div>
 
       {showConfirm && (
-        <div
-          className="fixed inset-0 bg-dark-brown/50 dark:bg-black/70 flex items-center justify-center z-50 px-4 [margin-block-end:0]"
-          onClick={handleCancelDelete}
-        >
-          <div
-            className="bg-cream dark:bg-dark-surface rounded-sm p-6 sm:p-8 max-w-md w-full shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-xl font-serif text-dark-brown dark:text-dark-text mb-4">
-              Delete Entry
-            </h3>
-            <p className="text-dark-brown/80 dark:text-dark-text/80 mb-6">
-              Are you sure you want to delete this entry? This action cannot be undone.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={handleCancelDelete}
-                className="btn-secondary cursor-pointer"
-                disabled={isDeleting}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="btn-primary cursor-pointer"
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          isOpen={showConfirm}
+          title="Delete Entry"
+          message="Are you sure you want to delete this entry? This action cannot be undone."
+          confirmLabel={isDeleting ? 'Deleting...' : 'Delete'}
+          cancelLabel="Cancel"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          isLoading={isDeleting}
+        />
       )}
     </>
   )
