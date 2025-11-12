@@ -80,7 +80,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="btn-primary w-full"
+              className="btn-primary w-full cursor-pointer"
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign In'}

@@ -96,14 +96,14 @@ export default function EntryCard({ entry, onDelete }: EntryCardProps) {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={handleCancelDelete}
-                className="btn-secondary"
+                className="btn-secondary cursor-pointer"
                 disabled={isDeleting}
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="btn-primary"
+                className="btn-primary cursor-pointer"
                 disabled={isDeleting}
               >
                 {isDeleting ? 'Deleting...' : 'Delete'}

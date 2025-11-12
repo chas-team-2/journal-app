@@ -24,7 +24,7 @@ export default function Header() {
           <ThemeToggle />
           <button
             onClick={handleSignOut}
-            className="text-sm text-warm-gray hover:text-dark-brown dark:hover:text-dark-text transition-colors"
+            className="text-sm text-warm-gray hover:text-dark-brown dark:hover:text-dark-text cursor-pointer transition-colors"
           >
             Sign Out
           </button>
