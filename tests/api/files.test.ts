@@ -67,6 +67,13 @@ describe("files.ts", () => {
       expect(result.wasModified).toBe(true);
     });
 
+    test("sanitizes filename with commas", () => {
+      const result = sanitizeFilename("report,2024,final.pdf");
+      expect(result.isValid).toBe(true);
+      expect(result.filename).toBe("report_2024_final.pdf");
+      expect(result.wasModified).toBe(true);
+    });
+
     test("prevents directory traversal", () => {
       const result = sanitizeFilename("../../etc/passwd.pdf");
       expect(result.isValid).toBe(true);
