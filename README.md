@@ -31,14 +31,14 @@ A minimalist journaling application built with Next.js 16, TypeScript, Tailwind 
 - 🌓 **Dark/Light Mode** - Automatic theme switching based on system preferences
 
 ### File Attachments
-- 📎 **PDF Upload** - Attach PDF files (max 2MB) to journal entries
-- 🖱️ **Drag & Drop** - Intuitive drag and drop interface for file selection
-- 💾 **Upload on Save** - Files are uploaded when you save the entry (not immediately)
-- 🔄 **Replace Files** - Automatically replaces existing files when uploading new ones
-- 🗑️ **Delete Files** - Remove attached PDFs with confirmation dialog
-- 📥 **View Files** - Download/view PDFs via secure signed URLs
-- ✅ **Validation** - Client and server-side validation for file type and size
-- 🔒 **Secure Storage** - Files stored in Supabase Storage with RLS policies
+- **PDF Upload** - Attach PDF files (max 2MB) to journal entries
+- **Drag & Drop** - Intuitive drag and drop interface for file selection
+- **Upload on Save** - Files are uploaded when you save the entry (not immediately)
+- **Replace Files** - Automatically replaces existing files when uploading new ones
+- **Delete Files** - Remove attached PDFs with confirmation dialog
+- **View Files** - Download/view PDFs via secure signed URLs
+- **Validation** - Client and server-side validation for file type and size
+- **Secure Storage** - Files stored in Supabase Storage with RLS policies
 
 ## Architecture
 
@@ -112,7 +112,7 @@ Test account credentials have been provided separately via email or private chan
 - `npm run build` - Build the application for production
 - `npm start` - Start the production server
 - `npm run lint` - Run ESLint to check code quality
-- `npm run test` - Run Jest tests (56 tests including 16 file upload tests)
+- `npm run test` - Run Jest tests (63 tests including 23 file upload/sanitization tests)
 - `npm run types:generate` - Regenerate TypeScript types from Supabase database schema
 - `npm run docker:dev` - Start Docker development environment with auto-loaded .env variables
 
@@ -181,7 +181,8 @@ Vi har implementerat en automatiserad CI/CD-pipeline med GitHub Actions som säk
 - Checkar ut koden
 - Installerar Node.js 22 och dependencies (`npm ci`)
 - Kör ESLint för att hitta kodproblem
-- Kör Jest-tester för att verifiera funktionalitet
+- Kör Jest-tester för att verifiera funktionalitet (63 tester)
+- Genererar test coverage-rapport
 
 **Varför:** Detta fångar upp buggar och kodproblem tidigt i utvecklingsprocessen, innan de når `main`. Alla förändringar till `develop` måste passera dessa kontroller.
 
@@ -330,13 +331,8 @@ AI-verktyg (främst GitHub Copilot och ChatGPT) har använts som stöd i utveckl
 **Testing:**
 - Generering av Jest-testfiler för API-layer och komponenter
 - Hjälp med teststruktur och mock-data för Supabase
-- Skapande av 16 tester för filuppladdningsfunktionalitet
-
-**Feature Development:**
-- Implementation av PDF-uppladdningsfunktionalitet med drag & drop
-- Optimering av filhämtning (N+1 query fix)
-- Skapande av återanvändbara komponenter (FileUpload, ConfirmDialog)
-- Cleanup-logik för automatisk filborttagning
+- Skapande av 23 tester för filuppladdning och filename sanitization
+- Test coverage och edge case-identifiering
 
 **Docker & Deployment:**
 - Rekommendationer för optimering av Docker-image till 217MB.
