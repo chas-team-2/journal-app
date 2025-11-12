@@ -27,26 +27,64 @@ export default function FileUpload({
   const [error, setError] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+
+  const validateAndSelectFile = (file: File) => {
+    // Client-side validation
+    if (file.type !== 'application/pdf') {
+      setError('Only PDF files are allowed')
+      return false
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError('File is too large (max 2MB)')
+      return false
+    }
+
+    setError(null)
+    onFileSelect?.(file)
+    return true
+  }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Client-side validation
-    if (file.type !== 'application/pdf') {
-      setError('Only PDF files are allowed')
-      return
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      setError('File is too large (max 2MB)')
-      return
-    }
-
-    setError(null)
-    onFileSelect?.(file)
+    validateAndSelectFile(file)
     // Reset input
     e.target.value = ''
+  }
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!disabled) {
+      setIsDragging(true)
+    }
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    if (disabled) return
+
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      validateAndSelectFile(files[0])
+    }
   }
 
   const handleRemoveSelectedFile = () => {
@@ -184,7 +222,17 @@ export default function FileUpload({
       <label className="block text-sm font-medium text-dark-brown dark:text-dark-text">
         PDF Attachment (optional)
       </label>
-      <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-warm-gray/30 dark:border-warm-gray/20 rounded-sm cursor-pointer hover:border-warm-gray/50 dark:hover:border-warm-gray/40 transition-colors">
+      <label 
+        className={`flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-sm cursor-pointer transition-colors ${
+          isDragging 
+            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' 
+            : 'border-warm-gray/30 dark:border-warm-gray/20 hover:border-warm-gray/50 dark:hover:border-warm-gray/40'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onDragEnter={handleDragEnter}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <input
           type="file"
           accept="application/pdf"
@@ -192,9 +240,9 @@ export default function FileUpload({
           disabled={disabled}
           className="hidden"
         />
-        <Upload className="w-8 h-8 text-warm-gray mb-2" />
-        <p className="text-sm text-dark-brown dark:text-dark-text">
-          Click to select PDF
+        <Upload className={`w-8 h-8 mb-2 ${isDragging ? 'text-emerald-600' : 'text-warm-gray'}`} />
+        <p className="text-sm text-dark-brown dark:text-dark-text text-center">
+          {isDragging ? 'Drop PDF here' : 'Click or drag & drop PDF'}
         </p>
         <p className="text-xs text-warm-gray mt-1">
           Max 2MB
