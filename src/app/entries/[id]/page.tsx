@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { apiGetEntry, apiUpdateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
+import FileUpload from "@/components/FileUpload";
 
 export default function EditEntryPage() {
 	const router = useRouter();
@@ -17,6 +18,18 @@ export default function EditEntryPage() {
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [fileInfo, setFileInfo] = useState<{ fileName: string; fileUrl: string } | null>(null);
+
+	const loadFileInfo = async () => {
+		try {
+			const fileResponse = await fetch(`/api/entries/${entryId}/file`);
+			if (fileResponse.ok) {
+				const fileData = await fileResponse.json();
+				setFileInfo(fileData.file);
+			}
+		} catch (err) {
+			console.error('Failed to load file info:', err);
+		}
+	};
 
 	useEffect(() => {
 		async function loadEntry() {
@@ -32,12 +45,8 @@ export default function EditEntryPage() {
 				setContent(entry.content);
 				setCreatedAt(entry.created_at);
 
-				// Fetch file info
-				const fileResponse = await fetch(`/api/entries/${entryId}/file`);
-				if (fileResponse.ok) {
-					const fileData = await fileResponse.json();
-					setFileInfo(fileData.file);
-				}
+				// Load file info
+				await loadFileInfo();
 			} catch (err: unknown) {
 				const message = err instanceof Error ? err.message : "Failed to load entry";
 				setError(message);
@@ -167,23 +176,12 @@ export default function EditEntryPage() {
 						/>
 					</div>
 
-					{fileInfo && (
-						<div className="p-4 bg-beige/50 dark:bg-dark-surface/50 rounded-sm border border-warm-gray/20">
-							<div className="flex items-center gap-2 text-dark-brown dark:text-dark-text">
-								<svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-									<path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-								</svg>
-								<a
-									href={fileInfo.fileUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="hover:underline font-medium"
-								>
-									{fileInfo.fileName}
-								</a>
-							</div>
-						</div>
-					)}
+					<FileUpload
+						entryId={entryId}
+						existingFile={fileInfo}
+						onUploadComplete={loadFileInfo}
+						disabled={saving}
+					/>
 
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm">
