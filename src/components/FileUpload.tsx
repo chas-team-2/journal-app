@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { FileText, Upload, X, Loader2 } from 'lucide-react'
 import ConfirmDialog from './ConfirmDialog'
+import { sanitizeFilename } from '@/lib/utils/sanitizeFilename'
 
 interface FileUploadProps {
   entryId?: string
@@ -25,6 +26,7 @@ export default function FileUpload({
   disabled 
 }: FileUploadProps) {
   const [error, setError] = useState<string | null>(null)
+  const [warning, setWarning] = useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -41,8 +43,34 @@ export default function FileUpload({
       return false
     }
 
+    // Sanitize filename
+    const sanitized = sanitizeFilename(file.name)
+    
+    console.log('Sanitize result:', { 
+      original: file.name, 
+      sanitized: sanitized.filename, 
+      wasModified: sanitized.wasModified 
+    })
+    
+    if (!sanitized.isValid) {
+      setError(sanitized.error || 'Invalid filename')
+      return false
+    }
+
+    // Show warning if filename was modified
+    if (sanitized.wasModified) {
+      setWarning(`Filename will be changed to: "${sanitized.filename}"`)
+    } else {
+      setWarning(null)
+    }
+
+    // Create new File with sanitized name if needed
+    const fileToSelect = sanitized.wasModified
+      ? new File([file], sanitized.filename, { type: file.type })
+      : file
+
     setError(null)
-    onFileSelect?.(file)
+    onFileSelect?.(fileToSelect)
     return true
   }
 
@@ -90,6 +118,7 @@ export default function FileUpload({
   const handleRemoveSelectedFile = () => {
     onFileSelect?.(null)
     setError(null)
+    setWarning(null)
   }
 
   const handleDeleteClick = () => {
@@ -151,6 +180,12 @@ export default function FileUpload({
             <X className="w-4 h-4" />
           </button>
         </div>
+        {warning && (
+          <p className="text-sm text-amber-600 dark:text-amber-400 flex items-start gap-2">
+            <span className="text-amber-600 dark:text-amber-400 flex-shrink-0">⚠️</span>
+            <span>{warning}</span>
+          </p>
+        )}
         {error && (
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
         )}
@@ -248,6 +283,12 @@ export default function FileUpload({
           Max 2MB
         </p>
       </label>
+      {warning && (
+        <p className="text-sm text-amber-600 dark:text-amber-400 flex items-start gap-2">
+          <span className="text-amber-600 dark:text-amber-400 flex-shrink-0">⚠️</span>
+          <span>{warning}</span>
+        </p>
+      )}
       {error && (
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}

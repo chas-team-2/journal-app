@@ -1,4 +1,5 @@
 import { uploadEntryFile, deleteEntryFile, getEntryFileUrl } from "../../src/lib/api/files";
+import { sanitizeFilename } from "../../src/lib/utils/sanitizeFilename";
 
 // Mock the server-side Supabase client
 jest.mock("../../src/lib/supabase/server", () => {
@@ -49,6 +50,55 @@ describe("files.ts", () => {
   });
   afterAll(() => {
     console.error = originalConsoleError;
+  });
+
+  describe("sanitizeFilename", () => {
+    test("accepts valid PDF filename", () => {
+      const result = sanitizeFilename("document-2024_v1.pdf");
+      expect(result.isValid).toBe(true);
+      expect(result.filename).toBe("document-2024_v1.pdf");
+      expect(result.wasModified).toBe(false);
+    });
+
+    test("sanitizes filename with spaces and special characters", () => {
+      const result = sanitizeFilename("My Report (Final).pdf");
+      expect(result.isValid).toBe(true);
+      expect(result.filename).toBe("My_Report_Final_.pdf");
+      expect(result.wasModified).toBe(true);
+    });
+
+    test("sanitizes filename with commas", () => {
+      const result = sanitizeFilename("report,2024,final.pdf");
+      expect(result.isValid).toBe(true);
+      expect(result.filename).toBe("report_2024_final.pdf");
+      expect(result.wasModified).toBe(true);
+    });
+
+    test("prevents directory traversal", () => {
+      const result = sanitizeFilename("../../etc/passwd.pdf");
+      expect(result.isValid).toBe(true);
+      expect(result.filename).toBe("_._etc_passwd.pdf");
+      expect(result.wasModified).toBe(true);
+    });
+
+    test("rejects Windows reserved names", () => {
+      const result = sanitizeFilename("CON.pdf");
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain("reserved by Windows");
+    });
+
+    test("rejects empty filename", () => {
+      const result = sanitizeFilename("");
+      expect(result.isValid).toBe(false);
+      expect(result.error).toBe("Filename cannot be empty");
+    });
+
+    test("handles very long filenames", () => {
+      const longName = "a".repeat(300) + ".pdf";
+      const result = sanitizeFilename(longName);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain("exceeds maximum length");
+    });
   });
 
   describe("uploadEntryFile", () => {
