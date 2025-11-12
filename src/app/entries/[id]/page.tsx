@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { apiGetEntry, apiUpdateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
+import FileUpload from "@/components/FileUpload";
 
 export default function EditEntryPage() {
 	const router = useRouter();
@@ -16,6 +17,8 @@ export default function EditEntryPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
+	const [fileInfo, setFileInfo] = useState<{ fileName: string; fileUrl: string } | null>(null);
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	useEffect(() => {
 		async function loadEntry() {
@@ -30,6 +33,17 @@ export default function EditEntryPage() {
 				setTitle(entry.title);
 				setContent(entry.content);
 				setCreatedAt(entry.created_at);
+
+				// Load file info
+				try {
+					const fileResponse = await fetch(`/api/entries/${entryId}/file`);
+					if (fileResponse.ok) {
+						const fileData = await fileResponse.json();
+						setFileInfo(fileData.file);
+					}
+				} catch (err) {
+					console.error('Failed to load file info:', err);
+				}
 			} catch (err: unknown) {
 				const message = err instanceof Error ? err.message : "Failed to load entry";
 				setError(message);
@@ -40,6 +54,18 @@ export default function EditEntryPage() {
 
 		loadEntry();
 	}, [router, entryId]);
+
+	const loadFileInfo = async () => {
+		try {
+			const fileResponse = await fetch(`/api/entries/${entryId}/file`);
+			if (fileResponse.ok) {
+				const fileData = await fileResponse.json();
+				setFileInfo(fileData.file);
+			}
+		} catch (err) {
+			console.error('Failed to load file info:', err);
+		}
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -53,8 +79,25 @@ export default function EditEntryPage() {
 		setSaving(true);
 
 		try {
-
+			// Update entry first
 			await apiUpdateEntry(entryId, { title, content });
+
+			// If a new file is selected, upload it
+			if (selectedFile) {
+				const formData = new FormData();
+				formData.append('file', selectedFile);
+				formData.append('entryId', entryId);
+
+				const uploadResponse = await fetch('/api/files', {
+					method: 'POST',
+					body: formData,
+				});
+
+				if (!uploadResponse.ok) {
+					console.error('File upload failed, but entry was updated');
+				}
+			}
+
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			console.error('Update failed:', err);
@@ -158,6 +201,15 @@ export default function EditEntryPage() {
 							disabled={saving}
 						/>
 					</div>
+
+					<FileUpload
+						entryId={entryId}
+						existingFile={fileInfo}
+						selectedFile={selectedFile}
+						onFileSelect={setSelectedFile}
+						onDeleteFile={loadFileInfo}
+						disabled={saving}
+					/>
 
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiCreateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
+import FileUpload from "@/components/FileUpload";
 
 export default function NewEntryPage() {
 	const router = useRouter();
@@ -13,6 +14,7 @@ export default function NewEntryPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [displayDate, setDisplayDate] = useState("");
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	useEffect(() => {
 		async function checkAuth() {
@@ -48,7 +50,25 @@ export default function NewEntryPage() {
 		setLoading(true);
 
 		try {
-			await apiCreateEntry({ title, content });
+			// Create entry first
+			const entry = await apiCreateEntry({ title, content });
+
+			// If file is selected, upload it
+			if (selectedFile) {
+				const formData = new FormData();
+				formData.append('file', selectedFile);
+				formData.append('entryId', entry.id);
+
+				const uploadResponse = await fetch('/api/files', {
+					method: 'POST',
+					body: formData,
+				});
+
+				if (!uploadResponse.ok) {
+					console.error('File upload failed, but entry was created');
+				}
+			}
+
 			router.push("/dashboard");
 		} catch (err: unknown) {
 			const message = err instanceof Error ? err.message : "Failed to create entry";
@@ -57,6 +77,7 @@ export default function NewEntryPage() {
 			setLoading(false);
 		}
 	};
+
 	return (
 		<div className="min-h-screen">
 			<Header />
@@ -112,6 +133,12 @@ export default function NewEntryPage() {
 							disabled={loading}
 						/>
 					</div>
+
+					<FileUpload
+						selectedFile={selectedFile}
+						onFileSelect={setSelectedFile}
+						disabled={loading}
+					/>
 
 					{error && (
 						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-sm text-sm">

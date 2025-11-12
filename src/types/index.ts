@@ -4,7 +4,12 @@ import { Tables, TablesInsert } from './supabase'
 export type { Database } from './supabase'
 
 // Database types
-export type Entry = Tables<'entries'>
+export type Entry = Tables<'entries'> & {
+  file?: {
+    fileName: string
+    fileUrl: string
+  } | null
+}
 export type NewEntry = Omit<TablesInsert<'entries'>, 'user_id' | 'id' | 'created_at'>
 
 // Auth types

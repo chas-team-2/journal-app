@@ -1,6 +1,6 @@
 # Journal App - Student Assignment Starter
 
-A minimalist journaling application built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
+A minimalist journaling application built with Next.js 16, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
 
 
 👥 Team: [Fares Elloumi](https://github.com/Fares-elloumi), [Cristian Pencheff](https://github.com/cribepencheff), [Aleksa Solevic](https://github.com/AleksaSolevic), [Ephraim Valladares](https://github.com/EphraimVC)
@@ -19,6 +19,26 @@ A minimalist journaling application built with Next.js 14, TypeScript, Tailwind 
 - **Styling:** Tailwind CSS
 - **Backend:** Next.js API Routes (Route Handlers)
 - **Database & Auth:** Supabase (Authentication + PostgreSQL)
+- **File Storage:** Supabase Storage (for PDF attachments)
+
+## Features
+
+### Core Functionality
+- ✍️ **Create & Edit Journal Entries** - Write and update your daily thoughts
+- 🗑️ **Delete Entries** - Remove entries with confirmation dialog
+- 📋 **Entry Management** - View all entries on a dashboard with timestamps
+- 🔐 **Secure Authentication** - Email/password login and signup via Supabase
+- 🌓 **Dark/Light Mode** - Automatic theme switching based on system preferences
+
+### File Attachments
+- 📎 **PDF Upload** - Attach PDF files (max 2MB) to journal entries
+- 🖱️ **Drag & Drop** - Intuitive drag and drop interface for file selection
+- 💾 **Upload on Save** - Files are uploaded when you save the entry (not immediately)
+- 🔄 **Replace Files** - Automatically replaces existing files when uploading new ones
+- 🗑️ **Delete Files** - Remove attached PDFs with confirmation dialog
+- 📥 **View Files** - Download/view PDFs via secure signed URLs
+- ✅ **Validation** - Client and server-side validation for file type and size
+- 🔒 **Secure Storage** - Files stored in Supabase Storage with RLS policies
 
 ## Architecture
 
@@ -28,6 +48,17 @@ The application uses a **backend API layer** with Next.js Route Handlers instead
 - Separation of concerns
 - Easier testing and maintenance
 - Centralized error handling
+
+### File Upload Architecture
+
+File attachments are handled through:
+
+- **Storage:** Supabase Storage bucket (`entry-files`) with structure `{user_id}/{entry_id}/filename.pdf`
+- **Security:** Row Level Security (RLS) policies ensure users can only access their own files
+- **Validation:** Server-side validation for file type (PDF only) and size (max 2MB)
+- **URLs:** Temporary signed URLs (1-hour expiration) for secure file access
+- **Cleanup:** Automatic file deletion when entries are removed
+- **No Metadata in DB:** Files are tracked by storage path only (storage as single source of truth)
 
 ## Type Safety
 
@@ -48,7 +79,12 @@ npm install
 
 1. Create a new project on Supabase
 2. Run all SQL commands from `src/supabase/schema.sql` in the SQL Editor
-3. Copy the API keys from Supabase to your `.env` file
+3. Set up Supabase Storage for file uploads:
+   - Go to **Storage** in Supabase Dashboard
+   - Create a new bucket named `entry-files`
+   - Set bucket as **Private** (not public)
+   - Apply RLS policies (see `personal-docs/file-upload-implementation-plan.md` for SQL)
+4. Copy the API keys from Supabase to your `.env` file
 
 ```env
 # Required for runtime
@@ -76,7 +112,7 @@ Test account credentials have been provided separately via email or private chan
 - `npm run build` - Build the application for production
 - `npm start` - Start the production server
 - `npm run lint` - Run ESLint to check code quality
-- `npm run test` - Run Jest tests
+- `npm run test` - Run Jest tests (56 tests including 16 file upload tests)
 - `npm run types:generate` - Regenerate TypeScript types from Supabase database schema
 - `npm run docker:dev` - Start Docker development environment with auto-loaded .env variables
 
@@ -294,6 +330,13 @@ AI-verktyg (främst GitHub Copilot och ChatGPT) har använts som stöd i utveckl
 **Testing:**
 - Generering av Jest-testfiler för API-layer och komponenter
 - Hjälp med teststruktur och mock-data för Supabase
+- Skapande av 16 tester för filuppladdningsfunktionalitet
+
+**Feature Development:**
+- Implementation av PDF-uppladdningsfunktionalitet med drag & drop
+- Optimering av filhämtning (N+1 query fix)
+- Skapande av återanvändbara komponenter (FileUpload, ConfirmDialog)
+- Cleanup-logik för automatisk filborttagning
 
 **Docker & Deployment:**
 - Rekommendationer för optimering av Docker-image till 217MB.

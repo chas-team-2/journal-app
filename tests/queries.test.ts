@@ -3,8 +3,14 @@ import { getEntries, createEntry } from "../src/lib/supabase/queries";
 // Mock the server-side Supabase client factory used inside queries.ts
 jest.mock("../src/lib/supabase/server", () => {
   const auth = { getUser: jest.fn() };
+  const storage = {
+    from: jest.fn(() => ({
+      list: jest.fn(),
+      createSignedUrl: jest.fn(),
+    })),
+  };
   const from = jest.fn();
-  const client = { auth, from };
+  const client = { auth, from, storage };
   return {
     createClient: jest.fn(async () => client),
     __client: client, // exposed for test control
@@ -14,6 +20,9 @@ jest.mock("../src/lib/supabase/server", () => {
 type SupabaseClientMock = {
   auth: { getUser: jest.Mock };
   from: jest.Mock;
+  storage: {
+    from: jest.Mock;
+  };
 };
 
 const { __client } = jest.requireMock("../src/lib/supabase/server") as {
@@ -44,6 +53,16 @@ describe("queries.ts", () => {
 
     // Returns entries ordered by created_at when successful.
     test("returns entries for authenticated user", async () => {
+      // Mock authenticated user
+      __client.auth.getUser.mockResolvedValue({
+        data: { user: { id: "uid-1" } },
+        error: null,
+      });
+
+      // Mock storage to return no files
+      const storageList = jest.fn().mockResolvedValue({ data: [], error: null });
+      __client.storage.from.mockReturnValue({ list: storageList });
+
       const builder = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
@@ -75,10 +94,19 @@ describe("queries.ts", () => {
         ascending: false,
       });
       expect(result).toHaveLength(2);
+      // Verify entries have file property set to null
+      expect(result[0]).toHaveProperty("file", null);
+      expect(result[1]).toHaveProperty("file", null);
     });
 
     // Resolves to an empty list when the database returns no rows.
     test("returns empty array when no data", async () => {
+      // Mock authenticated user
+      __client.auth.getUser.mockResolvedValue({
+        data: { user: { id: "uid-1" } },
+        error: null,
+      });
+
       const builder = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: null, error: null }),
