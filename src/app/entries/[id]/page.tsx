@@ -19,18 +19,6 @@ export default function EditEntryPage() {
 	const [saving, setSaving] = useState(false);
 	const [fileInfo, setFileInfo] = useState<{ fileName: string; fileUrl: string } | null>(null);
 
-	const loadFileInfo = async () => {
-		try {
-			const fileResponse = await fetch(`/api/entries/${entryId}/file`);
-			if (fileResponse.ok) {
-				const fileData = await fileResponse.json();
-				setFileInfo(fileData.file);
-			}
-		} catch (err) {
-			console.error('Failed to load file info:', err);
-		}
-	};
-
 	useEffect(() => {
 		async function loadEntry() {
 			try {
@@ -46,7 +34,15 @@ export default function EditEntryPage() {
 				setCreatedAt(entry.created_at);
 
 				// Load file info
-				await loadFileInfo();
+				try {
+					const fileResponse = await fetch(`/api/entries/${entryId}/file`);
+					if (fileResponse.ok) {
+						const fileData = await fileResponse.json();
+						setFileInfo(fileData.file);
+					}
+				} catch (err) {
+					console.error('Failed to load file info:', err);
+				}
 			} catch (err: unknown) {
 				const message = err instanceof Error ? err.message : "Failed to load entry";
 				setError(message);
@@ -57,6 +53,18 @@ export default function EditEntryPage() {
 
 		loadEntry();
 	}, [router, entryId]);
+
+	const loadFileInfo = async () => {
+		try {
+			const fileResponse = await fetch(`/api/entries/${entryId}/file`);
+			if (fileResponse.ok) {
+				const fileData = await fileResponse.json();
+				setFileInfo(fileData.file);
+			}
+		} catch (err) {
+			console.error('Failed to load file info:', err);
+		}
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();

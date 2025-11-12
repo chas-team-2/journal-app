@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiCreateEntry } from "@/lib/api/entries";
 import { apiGetCurrentUser } from "@/lib/api/auth";
 import Header from "@/components/Header";
-import { Upload, X, Loader2, FileText } from "lucide-react";
+import { Upload, X, FileText } from "lucide-react";
 
 export default function NewEntryPage() {
 	const router = useRouter();
