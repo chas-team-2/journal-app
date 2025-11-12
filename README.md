@@ -1,6 +1,6 @@
 # Journal App - Student Assignment Starter
 
-A minimalist journaling application built with Next.js 14, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
+A minimalist journaling application built with Next.js 16, TypeScript, Tailwind CSS, and Supabase. This project serves as a starting point for students to practice debugging, adding features, and improving existing code.
 
 
 👥 Team: [Fares Elloumi](https://github.com/Fares-elloumi), [Cristian Pencheff](https://github.com/cribepencheff), [Aleksa Solevic](https://github.com/AleksaSolevic), [Ephraim Valladares](https://github.com/EphraimVC)
